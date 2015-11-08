@@ -49,7 +49,7 @@ export abstract class AbstractDriver implements Driver {
         throw new Error('Option: ' + option.name + ' required');
       }
 
-      if (option.hasOwnProperty('pattern') && !!value && !value.match(option.pattern)) {
+      if (option.hasOwnProperty('pattern') && !!value && !option.pattern.test(value)) {
         throw new Error('Option: ' + option.name + ' pattern: ' + option.pattern.toString() + ' not match');
       }
     }
@@ -305,7 +305,7 @@ export class DockerMachine {
         _this._exec(['status', name]).then((out: string) => {
           resolve(MachineStatus.valueOf(out))
         }).catch((out: string) => {
-          if (out.match(/not exist/ig)) {
+          if (/not exist/ig.test(out)) {
             resolve(MachineStatus.NOT_EXIST);
           } else {
             reject(out);

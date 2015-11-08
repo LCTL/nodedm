@@ -27,7 +27,7 @@ var AbstractDriver = (function () {
             if (option.required && value === null) {
                 throw new Error('Option: ' + option.name + ' required');
             }
-            if (option.hasOwnProperty('pattern') && !!value && !value.match(option.pattern)) {
+            if (option.hasOwnProperty('pattern') && !!value && !option.pattern.test(value)) {
                 throw new Error('Option: ' + option.name + ' pattern: ' + option.pattern.toString() + ' not match');
             }
         }
@@ -242,7 +242,7 @@ var DockerMachine = (function () {
                 _this._exec(['status', name]).then(function (out) {
                     resolve(MachineStatus.valueOf(out));
                 }).catch(function (out) {
-                    if (out.match(/not exist/ig)) {
+                    if (/not exist/ig.test(out)) {
                         resolve(MachineStatus.NOT_EXIST);
                     }
                     else {
