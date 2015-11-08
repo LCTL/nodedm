@@ -29,6 +29,7 @@ NodeDM communicate with docker-machine command, so you must install Docker Machi
 
 #### Driver:
 
+- [x] Generic
 - [ ] Amazon Web Services
 - [ ] Microsoft Azure
 - [ ] Digital Ocean
