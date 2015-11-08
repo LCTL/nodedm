@@ -131,6 +131,40 @@ export class VirtualBoxDriver extends AbstractDriver {
 
 }
 
+export class GenericDriver extends AbstractDriver {
+
+  static OPTION_IP_ADDRESS = {
+    name: 'generic-ip-address',
+    required: true,
+    pattern: /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
+  };
+
+  static OPTION_SSH_USER = {
+    name: 'generic-ssh-user',
+    required: false,
+  }
+
+  static OPTION_SSH_KEY = {
+    name: 'generic-ssh-key',
+    required: false,
+  }
+
+  static OPTION_SSH_PORT = {
+    name: 'generic-ssh-port',
+    required: false,
+  }
+
+  constructor() {
+    super('virtualbox', [
+      GenericDriver.OPTION_IP_ADDRESS,
+      GenericDriver.OPTION_SSH_USER,
+      GenericDriver.OPTION_SSH_KEY,
+      GenericDriver.OPTION_SSH_PORT
+    ]);
+  }
+
+}
+
 export class MachineStatus {
 
   static STOPPED: MachineStatus = new MachineStatus('Stopped');
