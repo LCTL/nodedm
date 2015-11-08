@@ -6,7 +6,7 @@ Integrate Docker Machine and NodeJS.
 
 NodeDM communicate with docker-machine command, so you must install Docker Machine on your PC / Server.
 
-#### Implemented docker machine function:
+#### Function:
 
 - [ ] active
 - [ ] config
@@ -27,7 +27,7 @@ NodeDM communicate with docker-machine command, so you must install Docker Machi
 - [ ] upgrade
 - [x] url
 
-#### Implemented docker machine driver:
+#### Driver:
 
 - [ ] Amazon Web Services
 - [ ] Microsoft Azure
