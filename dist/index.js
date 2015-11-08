@@ -134,9 +134,9 @@ var MachineStatus = (function () {
     }
     MachineStatus.valueOf = function (state) {
         for (var _i = 0, _a = MachineStatus.ALL; _i < _a.length; _i++) {
-            var status = _a[_i];
-            if (state.toLowerCase() === status.value.toLowerCase()) {
-                return status;
+            var status_1 = _a[_i];
+            if (state.toLowerCase() === status_1.value.toLowerCase()) {
+                return status_1;
             }
         }
         return MachineStatus.NOT_EXIST;

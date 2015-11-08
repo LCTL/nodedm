@@ -43,8 +43,8 @@ export abstract class AbstractDriver implements Driver {
     var optionValues: string[] = ['-d', this.name];
 
     for (let name in this.options) {
-      var option = this.options[name]
-      var value = this.values[name];
+      let option = this.options[name]
+      let value = this.values[name];
       if (option.required && value === null) {
         throw new Error('Option: ' + option.name + ' required');
       }
@@ -55,7 +55,7 @@ export abstract class AbstractDriver implements Driver {
     }
 
     for (let name in this.values) {
-      var value = this.values[name];
+      let value = this.values[name];
       optionValues.push('--' + name);
       optionValues.push(value);
     }
@@ -181,7 +181,7 @@ export class MachineStatus {
     MachineStatus.NOT_EXIST];
 
   static valueOf(state: string): MachineStatus {
-    for (var status of MachineStatus.ALL) {
+    for (let status of MachineStatus.ALL) {
       if (state.toLowerCase() === status.value.toLowerCase()) {
         return status;
       }
@@ -213,9 +213,9 @@ export class DockerMachine {
           swarmIndex: number = lines[0].indexOf('SWARM'),
           machines: Machine[] = [];
 
-        for (var i = 1; i < lines.length; i++) {
+        for (let i = 1; i < lines.length; i++) {
 
-          var line: string = lines[i];
+          let line: string = lines[i];
 
           if (line === null || line === '') {
             break;
