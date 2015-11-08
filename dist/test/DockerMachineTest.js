@@ -24,6 +24,9 @@ describe('DockerMachine', function () {
         it('should return vbox0 url', function (done) { return chai_1.expect(index_1.dm.url('vbox0'))
             .to.eventually.match(/^tcp:\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]+$/ig).notify(done); });
     });
+    describe('#upgrade', function () {
+        it('should upgrade vbox0', function (done) { return chai_1.expect(index_1.dm.upgrade('vbox0')).to.eventually.equal(true).notify(done); });
+    });
     describe('#stop', function () {
         it('should stop vbox1', function (done) { return chai_1.expect(index_1.dm.stop('vbox1'))
             .to.eventually.equal(true).notify(done); });

@@ -24,7 +24,7 @@ NodeDM communicate with docker-machine command, so you must install Docker Machi
 - [x] start
 - [x] status
 - [x] top
-- [ ] upgrade
+- [x] upgrade
 - [x] url
 
 #### Driver:

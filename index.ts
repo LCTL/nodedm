@@ -338,11 +338,20 @@ export class DockerMachine {
     return this._listExec(this.url);
   }
 
+  upgrade(names: string|string[]): Promise<boolean|boolean[]> {
+    var fn = (name: string) => this._bexec(['upgrade', name]);
+    return this._namesExec(names, fn);
+  }
+
+  upgradeAll(): Promise<boolean[]> {
+    return this._listExec(this.upgrade);
+  }
+
   protected _namesExec<R>(names: string|string[], fn: (name: string) => Promise<R>): Promise<R|R[]> {
     return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);
   }
 
-  protected _listExec<R>(fn:(nameLstring) => Promise<R>): Promise<R[]> {
+  protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<R[]> {
     var _this = this;
     return _this.list().then((machines: Machine[]) => {
       var names: string[] = machines.map((machine: Machine) => machine.name);
@@ -350,14 +359,14 @@ export class DockerMachine {
     })
   }
 
-  protected _batchExec<R>(names: string[], fn:(name:string) => Promise<R>): Promise<R[]> {
+  protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<R[]> {
     var _this = this;
     var promises: Promise<R>[] = [];
     names.forEach((name) => promises.push(fn.apply(_this, [name])));
     return Promise.all(promises);
   }
 
-  protected _bexec(command:string[]): Promise<boolean>{
+  protected _bexec(command: string[]): Promise<boolean> {
     return this._exec(command).then((out: string) => true);
   }
 

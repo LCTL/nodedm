@@ -43,6 +43,13 @@ describe('DockerMachine', () => {
 
   });
 
+  describe('#upgrade', () => {
+
+    it('should upgrade vbox0',
+      (done) => expect(dm.upgrade('vbox0')).to.eventually.equal(true).notify(done));
+
+  });
+
   describe('#stop', () => {
 
     it('should stop vbox1',
