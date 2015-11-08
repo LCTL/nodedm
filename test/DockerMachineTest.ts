@@ -50,6 +50,13 @@ describe('DockerMachine', () => {
 
   });
 
+  describe('#regenerateCert', () => {
+
+    it('should regenerate cert for vbox0',
+      (done) => expect(dm.regenerateCert('vbox0')).to.eventually.equal(true).notify(done));
+
+  });
+
   describe('#stop', () => {
 
     it('should stop vbox1',

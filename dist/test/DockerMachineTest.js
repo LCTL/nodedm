@@ -27,6 +27,9 @@ describe('DockerMachine', function () {
     describe('#upgrade', function () {
         it('should upgrade vbox0', function (done) { return chai_1.expect(index_1.dm.upgrade('vbox0')).to.eventually.equal(true).notify(done); });
     });
+    describe('#regenerateCert', function () {
+        it('should regenerate cert for vbox0', function (done) { return chai_1.expect(index_1.dm.regenerateCert('vbox0')).to.eventually.equal(true).notify(done); });
+    });
     describe('#stop', function () {
         it('should stop vbox1', function (done) { return chai_1.expect(index_1.dm.stop('vbox1'))
             .to.eventually.equal(true).notify(done); });

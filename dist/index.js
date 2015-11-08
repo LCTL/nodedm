@@ -281,6 +281,14 @@ var DockerMachine = (function () {
     DockerMachine.prototype.upgradeAll = function () {
         return this._listExec(this.upgrade);
     };
+    DockerMachine.prototype.regenerateCert = function (names) {
+        var _this = this;
+        var fn = function (name) { return _this._bexec(['regenerate-certs', '-f', name]); };
+        return this._namesExec(names, fn);
+    };
+    DockerMachine.prototype.regenerateAllCert = function () {
+        return this._listExec(this.regenerateCert);
+    };
     DockerMachine.prototype._namesExec = function (names, fn) {
         return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);
     };

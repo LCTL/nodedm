@@ -16,7 +16,7 @@ NodeDM communicate with docker-machine command, so you must install Docker Machi
 - [x] ip
 - [x] kill
 - [x] ls
-- [ ] regenerate-certs
+- [x] regenerate-certs
 - [x] restart
 - [x] rm
 - [ ] ssh

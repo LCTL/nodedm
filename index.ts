@@ -347,6 +347,15 @@ export class DockerMachine {
     return this._listExec(this.upgrade);
   }
 
+  regenerateCert(names: string|string[]): Promise<boolean|boolean[]> {
+    var fn = (name: string) => this._bexec(['regenerate-certs', '-f', name]);
+    return this._namesExec(names, fn);
+  }
+
+  regenerateAllCert(): Promise<boolean[]> {
+    return this._listExec(this.regenerateCert);
+  }
+
   protected _namesExec<R>(names: string|string[], fn: (name: string) => Promise<R>): Promise<R|R[]> {
     return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);
   }
