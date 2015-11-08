@@ -1,0 +1,22 @@
+{
+  "name": "nodedm",
+  "version": "1.0.0",
+  "description": "Integrate docker machine with NodeJS",
+  "main": "dist/index.js",
+  "scripts": {
+    "setup": "npm install && node node_modules/tsd/build/cli.js install && node node_modules/typescript/bin/tsc",
+    "test": "node node_modules/mocha/bin/mocha --timeout 1800000 dist/test/*.js"
+  },
+  "author": "Lawrence Cheung",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^1.6.2",
+    "tsd": "^0.6.5",
+    "es6-promise": "^3.0.2"
+  },
+  "devDependencies": {
+    "chai": "^3.4.0",
+    "chai-as-promised": "^5.1.0",
+    "mocha": "^2.3.3"
+  }
+}

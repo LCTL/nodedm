@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "removeComments": true,
+    "outDir": "./dist"
+  },
+  "filesGlob": [
+    "./**/*.ts",
+    "!./node_modules/**/*.ts",
+    "!./dist/**/*.ts",
+    "!./typings/*/**/*.ts"
+  ],
+  "files": [
+    "./index.ts",
+    "./test/DockerMachineTest.ts",
+    "./typings/tsd.d.ts"
+  ]
+}
