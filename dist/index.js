@@ -281,3 +281,4 @@ var DockerMachine = (function () {
 })();
 exports.DockerMachine = DockerMachine;
 ;
+exports.dm = new DockerMachine();

@@ -342,3 +342,5 @@ export class DockerMachine {
   };
 
 };
+
+export var dm = new DockerMachine();

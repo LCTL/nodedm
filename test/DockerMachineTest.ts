@@ -1,4 +1,4 @@
-import {DockerMachine, MachineStatus, VirtualBoxDriver} from '../index'
+import {dm, MachineStatus, VirtualBoxDriver} from '../index'
 import * as chai from 'chai';
 import {expect} from 'chai';
 import chaiAsPromised = require('chai-as-promised');
@@ -6,8 +6,6 @@ import chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
 describe('DockerMachine', () => {
-
-  var dm: DockerMachine = new DockerMachine();
 
   describe('#create', () => {
 
