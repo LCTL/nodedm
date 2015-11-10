@@ -128,6 +128,44 @@ var GenericDriver = (function (_super) {
     return GenericDriver;
 })(AbstractDriver);
 exports.GenericDriver = GenericDriver;
+var Swarm = (function () {
+    function Swarm() {
+        this.master = false;
+        this.opts = [];
+    }
+    Swarm.prototype.addOpt = function (value) {
+        this.opts.push(value);
+    };
+    Swarm.prototype.toCommandOptions = function () {
+        var options = ['--swarm'];
+        if (this.master) {
+            options.push('--swarm-master');
+        }
+        this._push(options, 'swarm-discovery', this.discovery, function (name) {
+            throw new Error('Swarm discovery option cannot be empty');
+        });
+        this._push(options, 'swarm-strategy', this.strategy);
+        this._push(options, 'swarm-host', this.host);
+        this._push(options, 'swarm-addr', this.addr);
+        this._push(options, 'swarm-strategy', this.strategy);
+        for (var _i = 0, _a = this.opts; _i < _a.length; _i++) {
+            var opt = _a[_i];
+            this._push(options, 'swarm-opt', opt);
+        }
+        return options;
+    };
+    Swarm.prototype._push = function (options, name, value, emptyCallback) {
+        if (value) {
+            options.push('--' + name);
+            options.push(value);
+        }
+        else if (emptyCallback) {
+            emptyCallback(name);
+        }
+    };
+    return Swarm;
+})();
+exports.Swarm = Swarm;
 var MachineStatus = (function () {
     function MachineStatus(value) {
         this.value = value;
@@ -182,9 +220,15 @@ var DockerMachine = (function () {
         });
     };
     ;
-    DockerMachine.prototype.create = function (names, driver) {
+    DockerMachine.prototype.create = function (names, driver, swarm) {
         var _this = this;
-        var fn = function (name) { return _this._bexec(['create', name].concat(driver.toCommandOptions())); };
+        var fn = function (name) {
+            var options = ['create', name].concat(driver.toCommandOptions());
+            if (swarm) {
+                options = options.concat(swarm.toCommandOptions());
+            }
+            return _this._bexec(options);
+        };
         return this._namesExec(names, fn);
     };
     DockerMachine.prototype.inspect = function (names) {

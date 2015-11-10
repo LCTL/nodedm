@@ -64,4 +64,22 @@ describe('DockerMachine', function () {
         it('should remove all vbox', function (done) { return chai_1.expect(index_1.dm.removeAll())
             .to.eventually.deep.equal([true, true, true]).notify(done); });
     });
+    describe('#create swarm', function () {
+        it('should create 4 virtualbox VM and named vbox0, vbox1, vbox2, vbox3 with swarm', function (done) {
+            var vboxDriver = new index_1.VirtualBoxDriver();
+            var swarm = new index_1.Swarm();
+            vboxDriver.setOptionValue(index_1.VirtualBoxDriver.OPTION_MEMORY.name, "512");
+            swarm.master = true;
+            swarm.discovery = 'token://1234';
+            chai_1.expect(index_1.dm.create(['vbox0'], vboxDriver, swarm))
+                .to.eventually.deep.equal([true]).notify(done);
+            swarm.master = false;
+            chai_1.expect(index_1.dm.create(['vbox1', 'vbox2', 'vbox3'], vboxDriver, swarm))
+                .to.eventually.deep.equal([true, true, true]).notify(done);
+        });
+    });
+    describe('#swarm list', function () {
+        it('should return docker machine list', function (done) { return chai_1.expect(index_1.dm.list())
+            .to.eventually.deep.property('[1].swarm', 'vbox0').notify(done); });
+    });
 });

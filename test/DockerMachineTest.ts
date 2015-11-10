@@ -1,4 +1,4 @@
-import {dm, MachineStatus, VirtualBoxDriver} from '../index'
+import {dm, MachineStatus, VirtualBoxDriver, Swarm} from '../index'
 import * as chai from 'chai';
 import {expect} from 'chai';
 import chaiAsPromised = require('chai-as-promised');
@@ -122,6 +122,36 @@ describe('DockerMachine', () => {
     it('should remove all vbox',
       (done) => expect(dm.removeAll())
         .to.eventually.deep.equal([true, true, true]).notify(done));
+
+  });
+
+  describe('#create swarm', () => {
+
+    it('should create 4 virtualbox VM and named vbox0, vbox1, vbox2, vbox3 with swarm',
+      (done) => {
+        var vboxDriver: VirtualBoxDriver = new VirtualBoxDriver();
+        var swarm: Swarm = new Swarm();
+
+        vboxDriver.setOptionValue(VirtualBoxDriver.OPTION_MEMORY.name, "512");
+        swarm.master = true;
+        swarm.discovery = 'token://1234'
+
+        expect(dm.create(['vbox0'], vboxDriver, swarm))
+          .to.eventually.deep.equal([true]).notify(done);
+
+        swarm.master = false;
+
+        expect(dm.create(['vbox1', 'vbox2', 'vbox3'], vboxDriver, swarm))
+          .to.eventually.deep.equal([true, true, true]).notify(done);
+      });
+
+  });
+
+  describe('#swarm list', () => {
+
+    it('should return docker machine list',
+      (done) => expect(dm.list())
+        .to.eventually.deep.property('[1].swarm', 'vbox0').notify(done));
 
   });
 

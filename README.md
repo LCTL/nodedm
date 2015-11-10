@@ -10,7 +10,7 @@ NodeDM communicate with docker-machine command, so you must install Docker Machi
 
 - [ ] active
 - [ ] config
-- [x] create (no swarm)
+- [x] create
 - [ ] env
 - [x] inspect
 - [x] ip

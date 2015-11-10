@@ -165,6 +165,55 @@ export class GenericDriver extends AbstractDriver {
 
 }
 
+export class Swarm {
+
+  master: boolean = false;
+  discovery: string;
+  strategy: string;
+  host: string;
+  addr: string;
+  opts: string[] = [];
+
+  addOpt(value: string): void {
+    this.opts.push(value);
+  }
+
+  toCommandOptions(): string[] {
+
+    var options: string[] = ['--swarm'];
+
+    if (this.master) {
+      options.push('--swarm-master');
+    }
+
+    this._push(options, 'swarm-discovery', this.discovery, (name) => {
+      throw new Error('Swarm discovery option cannot be empty');
+    });
+
+    this._push(options, 'swarm-strategy', this.strategy);
+    this._push(options, 'swarm-host', this.host);
+    this._push(options, 'swarm-addr', this.addr);
+    this._push(options, 'swarm-strategy', this.strategy);
+
+    for (var opt of this.opts) {
+      this._push(options, 'swarm-opt', opt);
+    }
+
+    return options;
+
+  }
+
+  protected _push(options:string[], name:string, value:string, emptyCallback?:(name: string) => void){
+    if (value) {
+      options.push('--' + name);
+      options.push(value);
+    } else if (emptyCallback) {
+      emptyCallback(name);
+    }
+  }
+
+}
+
 export class MachineStatus {
 
   static STOPPED: MachineStatus = new MachineStatus('Stopped');
@@ -239,8 +288,14 @@ export class DockerMachine {
     });
   };
 
-  create(names: string|string[], driver: Driver): Promise<boolean|boolean[]> {
-    var fn = (name: string) => this._bexec(['create', name].concat(driver.toCommandOptions()));
+  create(names: string|string[], driver: Driver, swarm?: Swarm): Promise<boolean|boolean[]> {
+    var fn = (name: string) => {
+      var options: string[] = ['create', name].concat(driver.toCommandOptions());
+      if (swarm){
+        options = options.concat(swarm.toCommandOptions());
+      }
+      return this._bexec(options);
+    }
     return this._namesExec(names, fn);
   }
 
