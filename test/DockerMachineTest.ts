@@ -19,6 +19,14 @@ describe('DockerMachine', () => {
 
   });
 
+  describe('#list', () => {
+
+    it('should return list of machine',
+      (done) => expect(dm.list())
+        .to.eventually.deep.property('[0].name', 'vbox0').notify(done));
+
+  });
+
   describe('#inspect', () => {
 
     it('should return vbox0 inspect object',
@@ -109,21 +117,22 @@ describe('DockerMachine', () => {
 
   });
 
-  describe('#killAll', () => {
+  describe('#kill', () => {
 
-    it('should kill all vbox',
-      (done) => expect(dm.killAll())
+    it('should kill vbox0, vbox1, vbox2',
+      (done) => expect(dm.kill(['vbox0', 'vbox1', 'vbox2']))
         .to.eventually.deep.equal([true, true, true]).notify(done));
 
   });
 
-  describe('#removeAll', () => {
+  describe('#remove', () => {
 
-    it('should remove all vbox',
-      (done) => expect(dm.removeAll())
+    it('should remove vbox0, vbox1, vbox2',
+      (done) => expect(dm.remove(['vbox0', 'vbox1', 'vbox2']))
         .to.eventually.deep.equal([true, true, true]).notify(done));
 
   });
+
 
   describe('#create swarm', () => {
 
@@ -152,6 +161,22 @@ describe('DockerMachine', () => {
     it('should return docker machine list',
       (done) => expect(dm.list())
         .to.eventually.deep.property('[1].swarm', 'vbox0').notify(done));
+
+  });
+
+  describe('#killAll', () => {
+
+    it('should kill all vbox',
+      (done) => expect(dm.killAll())
+        .to.eventually.deep.equal([true, true, true, true]).notify(done));
+
+  });
+
+  describe('#removeAll', () => {
+
+    it('should remove all vbox',
+      (done) => expect(dm.removeAll())
+        .to.eventually.deep.equal([true, true, true, true]).notify(done));
 
   });
 

@@ -12,6 +12,10 @@ describe('DockerMachine', function () {
                 .to.eventually.deep.equal([true, true, true, true]).notify(done);
         });
     });
+    describe('#list', function () {
+        it('should return list of machine', function (done) { return chai_1.expect(index_1.dm.list())
+            .to.eventually.deep.property('[0].name', 'vbox0').notify(done); });
+    });
     describe('#inspect', function () {
         it('should return vbox0 inspect object', function (done) { return chai_1.expect(index_1.dm.inspect('vbox0'))
             .to.eventually.property('DriverName', 'virtualbox').notify(done); });
@@ -56,12 +60,12 @@ describe('DockerMachine', function () {
         it('should return not exist status when name is vbox3', function (done) { return chai_1.expect(index_1.dm.status('vbox3'))
             .to.eventually.equal(index_1.MachineStatus.NOT_EXIST).notify(done); });
     });
-    describe('#killAll', function () {
-        it('should kill all vbox', function (done) { return chai_1.expect(index_1.dm.killAll())
+    describe('#kill', function () {
+        it('should kill vbox0, vbox1, vbox2', function (done) { return chai_1.expect(index_1.dm.kill(['vbox0', 'vbox1', 'vbox2']))
             .to.eventually.deep.equal([true, true, true]).notify(done); });
     });
-    describe('#removeAll', function () {
-        it('should remove all vbox', function (done) { return chai_1.expect(index_1.dm.removeAll())
+    describe('#remove', function () {
+        it('should remove vbox0, vbox1, vbox2', function (done) { return chai_1.expect(index_1.dm.remove(['vbox0', 'vbox1', 'vbox2']))
             .to.eventually.deep.equal([true, true, true]).notify(done); });
     });
     describe('#create swarm', function () {
@@ -81,5 +85,13 @@ describe('DockerMachine', function () {
     describe('#swarm list', function () {
         it('should return docker machine list', function (done) { return chai_1.expect(index_1.dm.list())
             .to.eventually.deep.property('[1].swarm', 'vbox0').notify(done); });
+    });
+    describe('#killAll', function () {
+        it('should kill all vbox', function (done) { return chai_1.expect(index_1.dm.killAll())
+            .to.eventually.deep.equal([true, true, true, true]).notify(done); });
+    });
+    describe('#removeAll', function () {
+        it('should remove all vbox', function (done) { return chai_1.expect(index_1.dm.removeAll())
+            .to.eventually.deep.equal([true, true, true, true]).notify(done); });
     });
 });
