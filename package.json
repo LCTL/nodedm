@@ -10,11 +10,11 @@
   "author": "Lawrence Cheung",
   "license": "MIT",
   "dependencies": {
-    "typescript": "^1.6.2",
-    "tsd": "^0.6.5",
     "es6-promise": "^3.0.2"
   },
   "devDependencies": {
+    "typescript": "^1.6.2",
+    "tsd": "^0.6.5",
     "chai": "^3.4.0",
     "chai-as-promised": "^5.1.0",
     "mocha": "^2.3.3"
