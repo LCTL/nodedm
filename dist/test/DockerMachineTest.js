@@ -6,8 +6,9 @@ chai.use(chaiAsPromised);
 describe('DockerMachine', function () {
     describe('#create', function () {
         it('should create 4 virtualbox VM and named vbox0, vbox1, vbox2, vbox3', function (done) {
-            var vboxDriver = new index_1.VirtualBoxDriver();
-            vboxDriver.setOptionValue(index_1.VirtualBoxDriver.OPTION_MEMORY.name, "512");
+            var vboxDriver = new index_1.Driver();
+            vboxDriver.name = 'virtualbox';
+            vboxDriver.options['virtualbox-memory'] = '512';
             chai_1.expect(index_1.dm.create(['vbox0', 'vbox1', 'vbox2', 'vbox3'], vboxDriver))
                 .to.eventually.deep.equal([true, true, true, true]).notify(done);
         });
@@ -70,13 +71,14 @@ describe('DockerMachine', function () {
     });
     describe('#create swarm', function () {
         it('should create 4 virtualbox VM and named vbox0, vbox1, vbox2, vbox3 with swarm', function (done) {
-            var vboxDriver = new index_1.VirtualBoxDriver();
+            var vboxDriver = new index_1.Driver();
             var swarm = new index_1.Swarm();
-            vboxDriver.setOptionValue(index_1.VirtualBoxDriver.OPTION_MEMORY.name, "512");
+            vboxDriver.name = 'virtualbox';
+            vboxDriver.options['virtualbox-memory'] = '512';
             swarm.master = true;
             swarm.discovery = 'token://1234';
             chai_1.expect(index_1.dm.create(['vbox0'], vboxDriver, swarm))
-                .to.eventually.deep.equal([true]).notify(done);
+                .to.eventually.deep.equal([true]);
             swarm.master = false;
             chai_1.expect(index_1.dm.create(['vbox1', 'vbox2', 'vbox3'], vboxDriver, swarm))
                 .to.eventually.deep.equal([true, true, true]).notify(done);

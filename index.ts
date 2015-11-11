@@ -10,157 +10,15 @@ export interface Machine {
   swarm: string;
 }
 
-export interface DriverOption {
+export class Driver {
+
   name: string;
-  required: boolean;
-  pattern?: RegExp;
-}
-
-export interface Driver {
-  getName(): string;
-  setOptionValue(optionName: string, optionValue: string): void;
-  toCommandOptions(): string[];
-}
-
-export abstract class AbstractDriver implements Driver {
-
-  public options: { [key: string]: DriverOption; } = {};
-  public values: { [key: string]: string; } = {};
-
-  constructor(public name: string, options: DriverOption[]) {
-    options.forEach((opnion: DriverOption) => this.options[opnion.name] = opnion);
-  }
-
-  getName(): string {
-    return this.name;
-  }
-
-  setOptionValue(optionName: string, optionValue: string): void {
-    this.values[optionName] = optionValue
-  }
+  options: { [key: string]: string; } = {};
 
   toCommandOptions(): string[] {
     var optionValues: string[] = ['-d', this.name];
-
-    for (let name in this.options) {
-      let option = this.options[name]
-      let value = this.values[name];
-      if (option.required && value === null) {
-        throw new Error('Option: ' + option.name + ' required');
-      }
-
-      if (option.hasOwnProperty('pattern') && !!value && !option.pattern.test(value)) {
-        throw new Error('Option: ' + option.name + ' pattern: ' + option.pattern.toString() + ' not match');
-      }
-    }
-
-    for (let name in this.values) {
-      let value = this.values[name];
-      optionValues.push('--' + name);
-      optionValues.push(value);
-    }
-
+    Object.keys(this.options).forEach((key) => optionValues = optionValues.concat(['--' + key, this.options[key]]));
     return optionValues;
-  }
-
-}
-
-export class VirtualBoxDriver extends AbstractDriver {
-
-  static OPTION_MEMORY = {
-    name: 'virtualbox-memory',
-    required: false,
-    pattern: /[0-9]+/
-  };
-
-  static OPTION_CPU_COUNT = {
-    name: 'virtualbox-cpu-count',
-    required: false,
-    pattern: /[0-9]+/
-  };
-
-  static OPTION_DISK_SIZE = {
-    name: 'virtualbox-disk-size',
-    required: false,
-    pattern: /[0-9]+/
-  };
-
-  static OPTION_BOOT_2_DOCKER_RUL = {
-    name: 'virtualbox-boot2docker-url',
-    required: false
-  }
-
-  static OPTION_IMPORT_BOOT_2_DOCKER_VM = {
-    name: 'virtualbox-import-boot2docker-vm',
-    required: false
-  }
-
-  static OPTION_HOSTONLY_CIDR = {
-    name: 'virtualbox-hostonly-cidr',
-    required: false
-  }
-
-  static OPTION_HOSTONLY_NICTYPE = {
-    name: 'virtualbox-hostonly-nictype',
-    required: false
-  }
-
-  static OPTION_HOSTONLY_NICPROMISC = {
-    name: 'virtualbox-hostonly-nicpromisc',
-    required: false
-  }
-
-  static OPTION_NO_SHARE = {
-    name: 'virtualbox-no-share',
-    required: false
-  }
-
-  constructor() {
-    super('virtualbox', [
-      VirtualBoxDriver.OPTION_MEMORY,
-      VirtualBoxDriver.OPTION_CPU_COUNT,
-      VirtualBoxDriver.OPTION_DISK_SIZE,
-      VirtualBoxDriver.OPTION_BOOT_2_DOCKER_RUL,
-      VirtualBoxDriver.OPTION_IMPORT_BOOT_2_DOCKER_VM,
-      VirtualBoxDriver.OPTION_HOSTONLY_CIDR,
-      VirtualBoxDriver.OPTION_HOSTONLY_NICTYPE,
-      VirtualBoxDriver.OPTION_HOSTONLY_NICPROMISC,
-      VirtualBoxDriver.OPTION_NO_SHARE,
-    ]);
-  }
-
-}
-
-export class GenericDriver extends AbstractDriver {
-
-  static OPTION_IP_ADDRESS = {
-    name: 'generic-ip-address',
-    required: true,
-    pattern: /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
-  };
-
-  static OPTION_SSH_USER = {
-    name: 'generic-ssh-user',
-    required: false,
-  }
-
-  static OPTION_SSH_KEY = {
-    name: 'generic-ssh-key',
-    required: false,
-  }
-
-  static OPTION_SSH_PORT = {
-    name: 'generic-ssh-port',
-    required: false,
-  }
-
-  constructor() {
-    super('virtualbox', [
-      GenericDriver.OPTION_IP_ADDRESS,
-      GenericDriver.OPTION_SSH_USER,
-      GenericDriver.OPTION_SSH_KEY,
-      GenericDriver.OPTION_SSH_PORT
-    ]);
   }
 
 }
@@ -173,10 +31,6 @@ export class Swarm {
   host: string;
   addr: string;
   opts: string[] = [];
-
-  addOpt(value: string): void {
-    this.opts.push(value);
-  }
 
   toCommandOptions(): string[] {
 

@@ -1,141 +1,23 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var child_process = require('child_process');
 var es6_promise_1 = require('es6-promise');
-var AbstractDriver = (function () {
-    function AbstractDriver(name, options) {
-        var _this = this;
-        this.name = name;
+var Driver = (function () {
+    function Driver() {
         this.options = {};
-        this.values = {};
-        options.forEach(function (opnion) { return _this.options[opnion.name] = opnion; });
     }
-    AbstractDriver.prototype.getName = function () {
-        return this.name;
-    };
-    AbstractDriver.prototype.setOptionValue = function (optionName, optionValue) {
-        this.values[optionName] = optionValue;
-    };
-    AbstractDriver.prototype.toCommandOptions = function () {
+    Driver.prototype.toCommandOptions = function () {
+        var _this = this;
         var optionValues = ['-d', this.name];
-        for (var name_1 in this.options) {
-            var option = this.options[name_1];
-            var value = this.values[name_1];
-            if (option.required && value === null) {
-                throw new Error('Option: ' + option.name + ' required');
-            }
-            if (option.hasOwnProperty('pattern') && !!value && !option.pattern.test(value)) {
-                throw new Error('Option: ' + option.name + ' pattern: ' + option.pattern.toString() + ' not match');
-            }
-        }
-        for (var name_2 in this.values) {
-            var value = this.values[name_2];
-            optionValues.push('--' + name_2);
-            optionValues.push(value);
-        }
+        Object.keys(this.options).forEach(function (key) { return optionValues = optionValues.concat(['--' + key, _this.options[key]]); });
         return optionValues;
     };
-    return AbstractDriver;
+    return Driver;
 })();
-exports.AbstractDriver = AbstractDriver;
-var VirtualBoxDriver = (function (_super) {
-    __extends(VirtualBoxDriver, _super);
-    function VirtualBoxDriver() {
-        _super.call(this, 'virtualbox', [
-            VirtualBoxDriver.OPTION_MEMORY,
-            VirtualBoxDriver.OPTION_CPU_COUNT,
-            VirtualBoxDriver.OPTION_DISK_SIZE,
-            VirtualBoxDriver.OPTION_BOOT_2_DOCKER_RUL,
-            VirtualBoxDriver.OPTION_IMPORT_BOOT_2_DOCKER_VM,
-            VirtualBoxDriver.OPTION_HOSTONLY_CIDR,
-            VirtualBoxDriver.OPTION_HOSTONLY_NICTYPE,
-            VirtualBoxDriver.OPTION_HOSTONLY_NICPROMISC,
-            VirtualBoxDriver.OPTION_NO_SHARE,
-        ]);
-    }
-    VirtualBoxDriver.OPTION_MEMORY = {
-        name: 'virtualbox-memory',
-        required: false,
-        pattern: /[0-9]+/
-    };
-    VirtualBoxDriver.OPTION_CPU_COUNT = {
-        name: 'virtualbox-cpu-count',
-        required: false,
-        pattern: /[0-9]+/
-    };
-    VirtualBoxDriver.OPTION_DISK_SIZE = {
-        name: 'virtualbox-disk-size',
-        required: false,
-        pattern: /[0-9]+/
-    };
-    VirtualBoxDriver.OPTION_BOOT_2_DOCKER_RUL = {
-        name: 'virtualbox-boot2docker-url',
-        required: false
-    };
-    VirtualBoxDriver.OPTION_IMPORT_BOOT_2_DOCKER_VM = {
-        name: 'virtualbox-import-boot2docker-vm',
-        required: false
-    };
-    VirtualBoxDriver.OPTION_HOSTONLY_CIDR = {
-        name: 'virtualbox-hostonly-cidr',
-        required: false
-    };
-    VirtualBoxDriver.OPTION_HOSTONLY_NICTYPE = {
-        name: 'virtualbox-hostonly-nictype',
-        required: false
-    };
-    VirtualBoxDriver.OPTION_HOSTONLY_NICPROMISC = {
-        name: 'virtualbox-hostonly-nicpromisc',
-        required: false
-    };
-    VirtualBoxDriver.OPTION_NO_SHARE = {
-        name: 'virtualbox-no-share',
-        required: false
-    };
-    return VirtualBoxDriver;
-})(AbstractDriver);
-exports.VirtualBoxDriver = VirtualBoxDriver;
-var GenericDriver = (function (_super) {
-    __extends(GenericDriver, _super);
-    function GenericDriver() {
-        _super.call(this, 'virtualbox', [
-            GenericDriver.OPTION_IP_ADDRESS,
-            GenericDriver.OPTION_SSH_USER,
-            GenericDriver.OPTION_SSH_KEY,
-            GenericDriver.OPTION_SSH_PORT
-        ]);
-    }
-    GenericDriver.OPTION_IP_ADDRESS = {
-        name: 'generic-ip-address',
-        required: true,
-        pattern: /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
-    };
-    GenericDriver.OPTION_SSH_USER = {
-        name: 'generic-ssh-user',
-        required: false,
-    };
-    GenericDriver.OPTION_SSH_KEY = {
-        name: 'generic-ssh-key',
-        required: false,
-    };
-    GenericDriver.OPTION_SSH_PORT = {
-        name: 'generic-ssh-port',
-        required: false,
-    };
-    return GenericDriver;
-})(AbstractDriver);
-exports.GenericDriver = GenericDriver;
+exports.Driver = Driver;
 var Swarm = (function () {
     function Swarm() {
         this.master = false;
         this.opts = [];
     }
-    Swarm.prototype.addOpt = function (value) {
-        this.opts.push(value);
-    };
     Swarm.prototype.toCommandOptions = function () {
         var options = ['--swarm'];
         if (this.master) {
