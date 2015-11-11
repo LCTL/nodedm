@@ -1,7 +1,7 @@
 {
   "name": "nodedm",
-  "version": "1.0.0",
-  "description": "Integrate docker machine with NodeJS",
+  "version": "0.0.1",
+  "description": "Integrate docker machine and NodeJS",
   "main": "dist/index.js",
   "scripts": {
     "setup": "npm install && node node_modules/tsd/build/cli.js install && node node_modules/typescript/bin/tsc",
