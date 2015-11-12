@@ -9,6 +9,7 @@ addons:
 install:
   - curl -L https://github.com/docker/machine/releases/download/v0.5.0/docker-machine_linux-amd64.zip > machine.zip
   - unzip machine.zip
+  - mkdir /tmp/docker-machine
   - mv docker-machine* /tmp/docker-machine
   - export PATH=$PATH:/tmp/docker-machine
   - npm run setup
