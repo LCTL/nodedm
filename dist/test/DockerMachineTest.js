@@ -5,12 +5,24 @@ var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 describe('DockerMachine', function () {
     describe('#create', function () {
-        it('should create 4 virtualbox VM and named vbox0, vbox1, vbox2, vbox3', function (done) {
-            var vboxDriver = new index_1.Driver();
-            vboxDriver.name = 'virtualbox';
-            vboxDriver.options['virtualbox-memory'] = '512';
-            chai_1.expect(index_1.dm.create(['vbox0', 'vbox1', 'vbox2', 'vbox3'], vboxDriver))
-                .to.eventually.deep.equal([true, true, true, true]).notify(done);
+        var vboxDriver = new index_1.Driver();
+        vboxDriver.name = 'virtualbox';
+        vboxDriver.options['virtualbox-memory'] = '512';
+        it('should create virtualbox VM and named vbox0', function (done) {
+            return chai_1.expect(index_1.dm.create('vbox0', vboxDriver)).to.eventually
+                .deep.equal(true).notify(done);
+        });
+        it('should create virtualbox VM and named vbox1', function (done) {
+            return chai_1.expect(index_1.dm.create('vbox1', vboxDriver)).to.eventually
+                .deep.equal(true).notify(done);
+        });
+        it('should create virtualbox VM and named vbox2', function (done) {
+            return chai_1.expect(index_1.dm.create('vbox2', vboxDriver)).to.eventually
+                .deep.equal(true).notify(done);
+        });
+        it('should create virtualbox VM and named vbox3', function (done) {
+            return chai_1.expect(index_1.dm.create('vbox3', vboxDriver)).to.eventually
+                .deep.equal(true).notify(done);
         });
     });
     describe('#list', function () {
@@ -70,22 +82,32 @@ describe('DockerMachine', function () {
             .to.eventually.deep.equal([true, true, true]).notify(done); });
     });
     describe('#create swarm', function () {
-        it('should create 4 virtualbox VM and named vbox0, vbox1, vbox2, vbox3 with swarm', function (done) {
-            var vboxDriver = new index_1.Driver();
-            var swarm = new index_1.Swarm();
-            vboxDriver.name = 'virtualbox';
-            vboxDriver.options['virtualbox-memory'] = '512';
-            swarm.master = true;
-            swarm.discovery = 'token://1234';
-            chai_1.expect(index_1.dm.create(['vbox0'], vboxDriver, swarm))
-                .to.eventually.deep.equal([true]);
-            swarm.master = false;
-            chai_1.expect(index_1.dm.create(['vbox1', 'vbox2', 'vbox3'], vboxDriver, swarm))
-                .to.eventually.deep.equal([true, true, true]).notify(done);
+        var vboxDriver = new index_1.Driver();
+        var swarm = new index_1.Swarm();
+        vboxDriver.name = 'virtualbox';
+        vboxDriver.options['virtualbox-memory'] = '512';
+        swarm.master = true;
+        swarm.discovery = 'token://1234';
+        it('should create swarm master and named vbox0', function (done) {
+            return chai_1.expect(index_1.dm.create('vbox0', vboxDriver)).to.eventually
+                .deep.equal(true).notify(done);
+        });
+        swarm.master = false;
+        it('should create swarm slave and named vbox1', function (done) {
+            return chai_1.expect(index_1.dm.create('vbox1', vboxDriver)).to.eventually
+                .deep.equal(true).notify(done);
+        });
+        it('should create swarm slave and named vbox2', function (done) {
+            return chai_1.expect(index_1.dm.create('vbox2', vboxDriver)).to.eventually
+                .deep.equal(true).notify(done);
+        });
+        it('should create swarm slave and named vbox3', function (done) {
+            return chai_1.expect(index_1.dm.create('vbox3', vboxDriver)).to.eventually
+                .deep.equal(true).notify(done);
         });
     });
-    describe('#swarm list', function () {
-        it('should return docker machine list', function (done) { return chai_1.expect(index_1.dm.list())
+    describe('#list', function () {
+        it('should return list and swarm master is vbox0 ', function (done) { return chai_1.expect(index_1.dm.list())
             .to.eventually.deep.property('[1].swarm', 'vbox0').notify(done); });
     });
     describe('#killAll', function () {

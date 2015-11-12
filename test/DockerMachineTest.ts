@@ -9,14 +9,25 @@ describe('DockerMachine', () => {
 
   describe('#create', () => {
 
-    it('should create 4 virtualbox VM and named vbox0, vbox1, vbox2, vbox3',
-      (done) => {
-        var vboxDriver: Driver = new Driver();
-        vboxDriver.name = 'virtualbox';
-        vboxDriver.options['virtualbox-memory'] = '512';
-        expect(dm.create(['vbox0', 'vbox1', 'vbox2', 'vbox3'], vboxDriver))
-          .to.eventually.deep.equal([true, true, true, true]).notify(done);
-      });
+    var vboxDriver: Driver = new Driver();
+    vboxDriver.name = 'virtualbox';
+    vboxDriver.options['virtualbox-memory'] = '512';
+
+    it('should create virtualbox VM and named vbox0', (done) =>
+      expect(dm.create('vbox0', vboxDriver)).to.eventually
+        .deep.equal(true).notify(done));
+
+    it('should create virtualbox VM and named vbox1', (done) =>
+      expect(dm.create('vbox1', vboxDriver)).to.eventually
+        .deep.equal(true).notify(done));
+
+    it('should create virtualbox VM and named vbox2', (done) =>
+      expect(dm.create('vbox2', vboxDriver)).to.eventually
+        .deep.equal(true).notify(done));
+
+    it('should create virtualbox VM and named vbox3', (done) =>
+      expect(dm.create('vbox3', vboxDriver)).to.eventually
+        .deep.equal(true).notify(done));
 
   });
 
@@ -137,31 +148,38 @@ describe('DockerMachine', () => {
 
   describe('#create swarm', () => {
 
-    it('should create 4 virtualbox VM and named vbox0, vbox1, vbox2, vbox3 with swarm',
-      (done) => {
-        var vboxDriver: Driver = new Driver();
-        var swarm: Swarm = new Swarm();
+    var vboxDriver: Driver = new Driver();
+    var swarm: Swarm = new Swarm();
 
-        vboxDriver.name = 'virtualbox';
-        vboxDriver.options['virtualbox-memory'] = '512';
+    vboxDriver.name = 'virtualbox';
+    vboxDriver.options['virtualbox-memory'] = '512';
 
-        swarm.master = true;
-        swarm.discovery = 'token://1234'
+    swarm.master = true;
+    swarm.discovery = 'token://1234'
 
-        expect(dm.create(['vbox0'], vboxDriver, swarm))
-          .to.eventually.deep.equal([true]);
+    it('should create swarm master and named vbox0', (done) =>
+      expect(dm.create('vbox0', vboxDriver)).to.eventually
+        .deep.equal(true).notify(done));
 
-        swarm.master = false;
+    swarm.master = false;
 
-        expect(dm.create(['vbox1', 'vbox2', 'vbox3'], vboxDriver, swarm))
-          .to.eventually.deep.equal([true, true, true]).notify(done);
-      });
+    it('should create swarm slave and named vbox1', (done) =>
+      expect(dm.create('vbox1', vboxDriver)).to.eventually
+        .deep.equal(true).notify(done));
+
+    it('should create swarm slave and named vbox2', (done) =>
+      expect(dm.create('vbox2', vboxDriver)).to.eventually
+        .deep.equal(true).notify(done));
+
+    it('should create swarm slave and named vbox3', (done) =>
+      expect(dm.create('vbox3', vboxDriver)).to.eventually
+        .deep.equal(true).notify(done));
 
   });
 
-  describe('#swarm list', () => {
+  describe('#list', () => {
 
-    it('should return docker machine list',
+    it('should return list and swarm master is vbox0 ',
       (done) => expect(dm.list())
         .to.eventually.deep.property('[1].swarm', 'vbox0').notify(done));
 
