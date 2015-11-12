@@ -5,7 +5,7 @@ install:
   - curl -L https://github.com/docker/machine/releases/download/v0.5.0/docker-machine_linux-amd64.zip > machine.zip
   - unzip machine.zip
   - sudo mv docker-machine* /usr/local/bin
-  - sudo apt-add-repository "deb http://download.virtualbox.org/virtualbox/debian vivid contrib"
+  - sudo sh -c 'echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib" >> /etc/apt/sources.list.d/virtualbox.list'
   - wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
   - sudo apt-get update
   - sudo apt-get install -y virtualbox-5.0
