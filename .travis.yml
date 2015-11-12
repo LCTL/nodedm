@@ -11,6 +11,6 @@ install:
   - sudo apt-get install -y virtualbox-5.0
   - sudo apt-get install -y openssh-client
   - sudo apt-get install -y openssh-server
-  - sudo npm run setup
+  - npm run setup
 script:
-  - npm test
+  - sudo $(which npm) test
