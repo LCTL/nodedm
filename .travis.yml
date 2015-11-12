@@ -10,6 +10,7 @@ install:
   - sudo apt-get update
   - sudo apt-get install -y virtualbox-5.0
   - sudo apt-get install -y openssh-client
-  - npm run setup
+  - sudo apt-get install -y openssh-server
+  - sudo npm run setup
 script:
   - npm test
