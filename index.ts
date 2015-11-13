@@ -14,7 +14,7 @@ export class Driver {
 
   options: { [key: string]: string; } = {};
 
-  constructor(public name: string, options?: { [key: string]: string; })  {
+  constructor(public name: string, options?: { [key: string]: string; }) {
     if (!options) {
       this.options = options;
     }
@@ -62,7 +62,7 @@ export class Swarm {
 
   }
 
-  protected _push(options:string[], name:string, value:string, emptyCallback?:(name: string) => void){
+  protected _push(options: string[], name: string, value: string, emptyCallback?: (name: string) => void) {
     if (value) {
       options.push('--' + name);
       options.push(value);
@@ -150,7 +150,7 @@ export class DockerMachine {
   create(names: string|string[], driver: Driver, swarm?: Swarm): Promise<boolean|boolean[]> {
     var fn = (name: string) => {
       var options: string[] = ['create', name].concat(driver.toCommandOptions());
-      if (swarm){
+      if (swarm) {
         options = options.concat(swarm.toCommandOptions());
       }
       return this._bexec(options);
@@ -273,6 +273,15 @@ export class DockerMachine {
   ssh(names: string|string[], cmd: string): Promise<string|string[]> {
     var fn = (name: string) => this._exec(['ssh', name, '"' + cmd + '"']);
     return this._namesExec(names, fn);
+  }
+
+  scp(from: string, to: string, recursive: boolean): Promise<string> {
+    var command = ['scp'];
+    if (recursive) {
+      command.push('-r');
+    }
+    command = command.concat([from, to]);
+    return this._exec(command);
   }
 
   protected _namesExec<R>(names: string|string[], fn: (name: string) => Promise<R>): Promise<R|R[]> {

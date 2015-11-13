@@ -63,6 +63,7 @@ export declare class DockerMachine {
     regenerateCert(names: string | string[]): Promise<boolean | boolean[]>;
     regenerateAllCert(): Promise<boolean[]>;
     ssh(names: string | string[], cmd: string): Promise<string | string[]>;
+    scp(from: string, to: string, recursive: boolean): Promise<string>;
     protected _namesExec<R>(names: string | string[], fn: (name: string) => Promise<R>): Promise<R | R[]>;
     protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<R[]>;
     protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<R[]>;
