@@ -1,6 +1,6 @@
 {
   "name": "nodedm",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Integrate docker machine and NodeJS",
   "main": "dist/index.js",
   "scripts": {
