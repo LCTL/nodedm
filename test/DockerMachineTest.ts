@@ -66,6 +66,14 @@ describe('DockerMachine', () => {
 
   });
 
+  describe('#ssh', () => {
+
+    it('should return vbox0 `pwd` result',
+      (done) => expect(dm.ssh('vbox0', 'pwd'))
+        .to.eventually.equal('/home/docker').notify(done));
+
+  });
+
   describe('#upgrade', () => {
 
     it('should upgrade vbox0',

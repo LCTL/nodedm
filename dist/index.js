@@ -219,6 +219,11 @@ var DockerMachine = (function () {
     DockerMachine.prototype.regenerateAllCert = function () {
         return this._listExec(this.regenerateCert);
     };
+    DockerMachine.prototype.ssh = function (names, cmd) {
+        var _this = this;
+        var fn = function (name) { return _this._exec(['ssh', name, '"' + cmd + '"']); };
+        return this._namesExec(names, fn);
+    };
     DockerMachine.prototype._namesExec = function (names, fn) {
         return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);
     };

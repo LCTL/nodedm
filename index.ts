@@ -270,6 +270,11 @@ export class DockerMachine {
     return this._listExec(this.regenerateCert);
   }
 
+  ssh(names: string|string[], cmd: string): Promise<string|string[]> {
+    var fn = (name: string) => this._exec(['ssh', name, '"' + cmd + '"']);
+    return this._namesExec(names, fn);
+  }
+
   protected _namesExec<R>(names: string|string[], fn: (name: string) => Promise<R>): Promise<R|R[]> {
     return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);
   }
