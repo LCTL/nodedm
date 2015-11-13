@@ -11,6 +11,10 @@
     "type" : "git",
     "url" : "git@github.com:lawrence0819/nodedm.git"
   },
+  "keywords": [
+    "docker",
+    "docker machine"
+  ],
   "author": "Lawrence Cheung",
   "license": "MIT",
   "dependencies": {

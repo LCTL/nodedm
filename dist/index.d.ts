@@ -11,6 +11,9 @@ export declare class Driver {
     options: {
         [key: string]: string;
     };
+    constructor(name: string, options?: {
+        [key: string]: string;
+    });
     toCommandOptions(): string[];
 }
 export declare class Swarm {

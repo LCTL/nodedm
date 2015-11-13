@@ -12,8 +12,13 @@ export interface Machine {
 
 export class Driver {
 
-  name: string;
   options: { [key: string]: string; } = {};
+
+  constructor(public name: string, options?: { [key: string]: string; })  {
+    if (!options) {
+      this.options = options;
+    }
+  }
 
   toCommandOptions(): string[] {
     var optionValues: string[] = ['-d', this.name];

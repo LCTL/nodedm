@@ -1,8 +1,12 @@
 var child_process = require('child_process');
 var es6_promise_1 = require('es6-promise');
 var Driver = (function () {
-    function Driver() {
+    function Driver(name, options) {
+        this.name = name;
         this.options = {};
+        if (!options) {
+            this.options = options;
+        }
     }
     Driver.prototype.toCommandOptions = function () {
         var _this = this;
