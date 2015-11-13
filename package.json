@@ -7,6 +7,10 @@
     "setup": "npm install && node node_modules/tsd/build/cli.js install && node node_modules/typescript/bin/tsc",
     "test": "node node_modules/mocha/bin/mocha --timeout 1800000 dist/test/*.js"
   },
+  "repository": {
+    "type" : "git",
+    "url" : "git@github.com:lawrence0819/nodedm.git"
+  },
   "author": "Lawrence Cheung",
   "license": "MIT",
   "dependencies": {
