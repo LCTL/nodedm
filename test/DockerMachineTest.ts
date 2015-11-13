@@ -16,21 +16,9 @@ describe('DockerMachine', () => {
       'virtualbox-memory': '512'
     });
 
-    it('should create virtualbox VM and named vbox0', (done) =>
-      expect(dm.create('vbox0', vboxDriver)).to.eventually
-        .deep.equal(true).notify(done));
-
-    it('should create virtualbox VM and named vbox1', (done) =>
-      expect(dm.create('vbox1', vboxDriver)).to.eventually
-        .deep.equal(true).notify(done));
-
-    it('should create virtualbox VM and named vbox2', (done) =>
-      expect(dm.create('vbox2', vboxDriver)).to.eventually
-        .deep.equal(true).notify(done));
-
-    it('should create virtualbox VM and named vbox3', (done) =>
-      expect(dm.create('vbox3', vboxDriver)).to.eventually
-        .deep.equal(true).notify(done));
+    it('should create virtualbox VM and named vbox0, vbox1, vbox2, vbox3', (done) =>
+      expect(dm.create(['vbox0', 'vbox1', 'vbox2', 'vbox3'], vboxDriver)).to.eventually
+        .deep.equal([true, true, true, true]).notify(done));
 
   });
 

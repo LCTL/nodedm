@@ -10,21 +10,9 @@ describe('DockerMachine', function () {
         var vboxDriver = new index_1.Driver('virtualbox', {
             'virtualbox-memory': '512'
         });
-        it('should create virtualbox VM and named vbox0', function (done) {
-            return chai_1.expect(index_1.dm.create('vbox0', vboxDriver)).to.eventually
-                .deep.equal(true).notify(done);
-        });
-        it('should create virtualbox VM and named vbox1', function (done) {
-            return chai_1.expect(index_1.dm.create('vbox1', vboxDriver)).to.eventually
-                .deep.equal(true).notify(done);
-        });
-        it('should create virtualbox VM and named vbox2', function (done) {
-            return chai_1.expect(index_1.dm.create('vbox2', vboxDriver)).to.eventually
-                .deep.equal(true).notify(done);
-        });
-        it('should create virtualbox VM and named vbox3', function (done) {
-            return chai_1.expect(index_1.dm.create('vbox3', vboxDriver)).to.eventually
-                .deep.equal(true).notify(done);
+        it('should create virtualbox VM and named vbox0, vbox1, vbox2, vbox3', function (done) {
+            return chai_1.expect(index_1.dm.create(['vbox0', 'vbox1', 'vbox2', 'vbox3'], vboxDriver)).to.eventually
+                .deep.equal([true, true, true, true]).notify(done);
         });
     });
     describe('#list', function () {
