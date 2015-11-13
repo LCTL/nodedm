@@ -95,21 +95,13 @@ describe('DockerMachine', function () {
         swarm.master = true;
         swarm.discovery = 'token://1234';
         it('should create swarm master and named vbox0', function (done) {
-            return chai_1.expect(index_1.dm.create('vbox0', vboxDriver)).to.eventually
+            return chai_1.expect(index_1.dm.create('vbox0', vboxDriver, swarm)).to.eventually
                 .deep.equal(true).notify(done);
         });
-        swarm.master = false;
-        it('should create swarm slave and named vbox1', function (done) {
-            return chai_1.expect(index_1.dm.create('vbox1', vboxDriver)).to.eventually
-                .deep.equal(true).notify(done);
-        });
-        it('should create swarm slave and named vbox2', function (done) {
-            return chai_1.expect(index_1.dm.create('vbox2', vboxDriver)).to.eventually
-                .deep.equal(true).notify(done);
-        });
-        it('should create swarm slave and named vbox3', function (done) {
-            return chai_1.expect(index_1.dm.create('vbox3', vboxDriver)).to.eventually
-                .deep.equal(true).notify(done);
+        it('should create swarm slave and named vbox1, vobx2, vbox3', function (done) {
+            swarm.master = false;
+            chai_1.expect(index_1.dm.create(['vbox1', 'vbox2', 'vbox3'], vboxDriver, swarm)).to.eventually
+                .deep.equal([true, true, true]).notify(done);
         });
     });
     describe('#list', function () {

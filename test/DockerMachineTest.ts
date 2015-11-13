@@ -168,22 +168,14 @@ describe('DockerMachine', () => {
     swarm.discovery = 'token://1234'
 
     it('should create swarm master and named vbox0', (done) =>
-      expect(dm.create('vbox0', vboxDriver)).to.eventually
+      expect(dm.create('vbox0', vboxDriver, swarm)).to.eventually
         .deep.equal(true).notify(done));
 
-    swarm.master = false;
-
-    it('should create swarm slave and named vbox1', (done) =>
-      expect(dm.create('vbox1', vboxDriver)).to.eventually
-        .deep.equal(true).notify(done));
-
-    it('should create swarm slave and named vbox2', (done) =>
-      expect(dm.create('vbox2', vboxDriver)).to.eventually
-        .deep.equal(true).notify(done));
-
-    it('should create swarm slave and named vbox3', (done) =>
-      expect(dm.create('vbox3', vboxDriver)).to.eventually
-        .deep.equal(true).notify(done));
+    it('should create swarm slave and named vbox1, vobx2, vbox3', (done) => {
+      swarm.master = false;
+      expect(dm.create(['vbox1', 'vbox2', 'vbox3'], vboxDriver, swarm)).to.eventually
+        .deep.equal([true, true, true]).notify(done);
+    });
 
   });
 
