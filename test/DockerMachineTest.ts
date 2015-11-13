@@ -5,6 +5,9 @@ import chaiAsPromised = require('chai-as-promised');
 
 chai.use(chaiAsPromised);
 
+console.log ("!!! Warning !!!")
+console.log ("!!! This test will remove all existing docker machine and cannot be revert !!!")
+
 describe('DockerMachine', () => {
 
   describe('#create', () => {

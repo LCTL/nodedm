@@ -3,6 +3,8 @@ var chai = require('chai');
 var chai_1 = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
+console.log("!!! Warning !!!");
+console.log("!!! This test will remove all existing docker machine and cannot be revert !!!");
 describe('DockerMachine', function () {
     describe('#create', function () {
         var vboxDriver = new index_1.Driver();
