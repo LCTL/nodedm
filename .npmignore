@@ -39,3 +39,4 @@ test
 tsconfig.json
 tsd.json
 .travis.yml
+index.ts

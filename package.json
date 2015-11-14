@@ -3,13 +3,17 @@
   "version": "0.0.2",
   "description": "Integrate docker machine and NodeJS",
   "main": "dist/index.js",
+  "typescript": {
+    "definition": "./dist/index.d.ts"
+  },
   "scripts": {
     "setup": "npm install && node node_modules/tsd/build/cli.js install && node node_modules/typescript/bin/tsc",
+    "gendef": "node ./node_modules/dts-generator/bin/dts-generator --name nodedm --project . --exclude **/*.d.ts --exclude **/test/* --out ./dist/index.d.ts",
     "test": "node node_modules/mocha/bin/mocha --timeout 1800000 dist/test/*.js"
   },
   "repository": {
-    "type" : "git",
-    "url" : "git@github.com:lawrence0819/nodedm.git"
+    "type": "git",
+    "url": "git@github.com:lawrence0819/nodedm.git"
   },
   "keywords": [
     "docker",
@@ -21,10 +25,11 @@
     "es6-promise": "^3.0.2"
   },
   "devDependencies": {
-    "typescript": "^1.6.2",
-    "tsd": "^0.6.5",
     "chai": "^3.4.0",
     "chai-as-promised": "^5.1.0",
-    "mocha": "^2.3.3"
+    "dts-generator": "^1.6.2",
+    "mocha": "^2.3.3",
+    "tsd": "^0.6.5",
+    "typescript": "^1.6.2"
   }
 }
