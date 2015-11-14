@@ -6,6 +6,11 @@ export interface Machine {
     url: string;
     swarm: string;
 }
+export interface EnvConfig {
+    swarm?: boolean;
+    shell?: string;
+    unset?: boolean;
+}
 export declare class Driver {
     name: string;
     options: {
@@ -64,6 +69,9 @@ export declare class DockerMachine {
     regenerateAllCert(): Promise<boolean[]>;
     ssh(names: string | string[], cmd: string): Promise<string | string[]>;
     scp(from: string, to: string, recursive: boolean): Promise<string>;
+    active(): Promise<string>;
+    config(names: string | string[]): Promise<string | string[]>;
+    env(names: string | string[], config?: EnvConfig): Promise<string | string[]>;
     protected _namesExec<R>(names: string | string[], fn: (name: string) => Promise<R>): Promise<R | R[]>;
     protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<R[]>;
     protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<R[]>;

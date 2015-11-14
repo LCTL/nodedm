@@ -54,6 +54,22 @@ describe('DockerMachine', () => {
 
   });
 
+  describe('#config', () => {
+
+    it('should return vbox0 config',
+      (done) => expect(dm.config('vbox0'))
+        .to.eventually.not.empty.notify(done));
+
+  });
+
+  describe('#env', () => {
+
+    it('should return vbox0 env',
+      (done) => expect(dm.env('vbox0', {shell: 'cmd'}))
+        .to.eventually.not.empty.notify(done));
+
+  });
+
   describe('#ssh', () => {
 
     it('should return vbox0 `pwd` result',

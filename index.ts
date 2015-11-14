@@ -10,6 +10,12 @@ export interface Machine {
   swarm: string;
 }
 
+export interface EnvConfig {
+  swarm?: boolean;
+  shell?: string;
+  unset?: boolean;
+}
+
 export class Driver {
 
   options: { [key: string]: string; } = {};
@@ -282,6 +288,38 @@ export class DockerMachine {
     }
     command = command.concat([from, to]);
     return this._exec(command);
+  }
+
+  active(): Promise<string>{
+    return this._exec(['active']);
+  }
+
+  config(names: string|string[]): Promise<string|string[]>{
+    var fn = (name: string) => this._exec(['config', name]);
+    return this._namesExec(names, fn);
+  }
+
+  env(names: string|string[], config?: EnvConfig): Promise<string|string[]>{
+    var fn = (name: string) => {
+      var command = ['env', name]
+      var fn = null;
+
+      if (config.swarm === true) {
+        command.push('--swarm')
+      }
+
+      if (config.shell) {
+        command = command.concat(['--shell', config.shell])
+      }
+
+      if (config.unset === true) {
+        command = command.concat(['--unset'])
+      }
+
+      return this._exec(command);
+    }
+
+    return this._namesExec(names, fn);
   }
 
   protected _namesExec<R>(names: string|string[], fn: (name: string) => Promise<R>): Promise<R|R[]> {

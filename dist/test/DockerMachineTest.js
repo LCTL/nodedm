@@ -31,6 +31,14 @@ describe('DockerMachine', function () {
         it('should return vbox0 url', function (done) { return chai_1.expect(index_1.dm.url('vbox0'))
             .to.eventually.match(/^tcp:\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]+$/ig).notify(done); });
     });
+    describe('#config', function () {
+        it('should return vbox0 config', function (done) { return chai_1.expect(index_1.dm.config('vbox0'))
+            .to.eventually.not.empty.notify(done); });
+    });
+    describe('#env', function () {
+        it('should return vbox0 env', function (done) { return chai_1.expect(index_1.dm.env('vbox0', { shell: 'cmd' }))
+            .to.eventually.not.empty.notify(done); });
+    });
     describe('#ssh', function () {
         it('should return vbox0 `pwd` result', function (done) { return chai_1.expect(index_1.dm.ssh('vbox0', 'pwd'))
             .to.eventually.equal('/home/docker').notify(done); });

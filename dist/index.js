@@ -232,6 +232,32 @@ var DockerMachine = (function () {
         command = command.concat([from, to]);
         return this._exec(command);
     };
+    DockerMachine.prototype.active = function () {
+        return this._exec(['active']);
+    };
+    DockerMachine.prototype.config = function (names) {
+        var _this = this;
+        var fn = function (name) { return _this._exec(['config', name]); };
+        return this._namesExec(names, fn);
+    };
+    DockerMachine.prototype.env = function (names, config) {
+        var _this = this;
+        var fn = function (name) {
+            var command = ['env', name];
+            var fn = null;
+            if (config.swarm === true) {
+                command.push('--swarm');
+            }
+            if (config.shell) {
+                command = command.concat(['--shell', config.shell]);
+            }
+            if (config.unset === true) {
+                command = command.concat(['--unset']);
+            }
+            return _this._exec(command);
+        };
+        return this._namesExec(names, fn);
+    };
     DockerMachine.prototype._namesExec = function (names, fn) {
         return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);
     };
