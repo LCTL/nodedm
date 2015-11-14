@@ -18,7 +18,12 @@ describe('DockerMachine', () => {
 
     it('should create virtualbox VM and named vbox0, vbox1, vbox2, vbox3', (done) =>
       expect(dm.create(['vbox0', 'vbox1', 'vbox2', 'vbox3'], vboxDriver)).to.eventually
-        .deep.equal([true, true, true, true]).notify(done));
+        .deep.equal({
+          vbox0: true,
+          vbox1: true,
+          vbox2: true,
+          vbox3: true
+        }).notify(done));
 
   });
 
@@ -142,13 +147,26 @@ describe('DockerMachine', () => {
       (done) => expect(dm.status('vbox3'))
         .to.eventually.equal(MachineStatus.NOT_EXIST).notify(done));
 
+    it('should return vbox0, vbox1, vbox2, vbox 3 status',
+      (done) => expect(dm.status(['vbox0', 'vbox1', 'vbox2', 'vbox3']))
+        .to.eventually.equal({
+          vbox0: MachineStatus.RUNNING,
+          vbox1: MachineStatus.STOPPED,
+          vbox2: MachineStatus.RUNNING,
+          vbox3: MachineStatus.NOT_EXIST
+        }).notify(done));
+
   });
 
   describe('#kill', () => {
 
     it('should kill vbox0, vbox1, vbox2',
       (done) => expect(dm.kill(['vbox0', 'vbox1', 'vbox2']))
-        .to.eventually.deep.equal([true, true, true]).notify(done));
+        .to.eventually.deep.equal({
+          vbox0: true,
+          vbox1: true,
+          vbox2: true
+        }).notify(done));
 
   });
 
@@ -156,7 +174,11 @@ describe('DockerMachine', () => {
 
     it('should remove vbox0, vbox1, vbox2',
       (done) => expect(dm.remove(['vbox0', 'vbox1', 'vbox2']))
-        .to.eventually.deep.equal([true, true, true]).notify(done));
+        .to.eventually.deep.equal({
+          vbox0: true,
+          vbox1: true,
+          vbox2: true
+        }).notify(done));
 
   });
 
@@ -178,7 +200,11 @@ describe('DockerMachine', () => {
     it('should create swarm slave and named vbox1, vobx2, vbox3', (done) => {
       swarm.master = false;
       expect(dm.create(['vbox1', 'vbox2', 'vbox3'], vboxDriver, swarm)).to.eventually
-        .deep.equal([true, true, true]).notify(done);
+        .deep.equal({
+          vbox1: true,
+          vbox2: true,
+          vbox3: true
+        }).notify(done);
     });
 
   });
@@ -195,7 +221,12 @@ describe('DockerMachine', () => {
 
     it('should kill all vbox',
       (done) => expect(dm.killAll())
-        .to.eventually.deep.equal([true, true, true, true]).notify(done));
+        .to.eventually.deep.equal({
+          vbox0: true,
+          vbox1: true,
+          vbox2: true,
+          vbox3: true
+        }).notify(done));
 
   });
 
@@ -203,7 +234,12 @@ describe('DockerMachine', () => {
 
     it('should remove all vbox',
       (done) => expect(dm.removeAll())
-        .to.eventually.deep.equal([true, true, true, true]).notify(done));
+        .to.eventually.deep.equal({
+          vbox0: true,
+          vbox1: true,
+          vbox2: true,
+          vbox3: true
+        }).notify(done));
 
   });
 

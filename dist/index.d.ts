@@ -11,14 +11,17 @@ export interface EnvConfig {
     shell?: string;
     unset?: boolean;
 }
+export interface Entry<R> {
+    name: string;
+    value: R;
+}
+export interface Map<R> {
+    [name: string]: R;
+}
 export declare class Driver {
     name: string;
-    options: {
-        [key: string]: string;
-    };
-    constructor(name: string, options?: {
-        [key: string]: string;
-    });
+    options: Map<string>;
+    constructor(name: string, options?: Map<string>);
     toCommandOptions(): string[];
 }
 export declare class Swarm {
@@ -44,37 +47,37 @@ export declare class MachineStatus {
 }
 export declare class DockerMachine {
     ls(): Promise<Machine[]>;
-    create(names: string | string[], driver: Driver, swarm?: Swarm): Promise<boolean | boolean[]>;
-    inspect(names: string | string[]): Promise<any | any[]>;
-    inspectAll(): Promise<any[]>;
-    remove(names: string | string[]): Promise<boolean | boolean[]>;
-    removeAll(): Promise<boolean[]>;
-    start(names: string | string[]): Promise<boolean | boolean[]>;
-    startAll(): Promise<boolean[]>;
-    stop(names: string | string[]): Promise<boolean | boolean[]>;
-    stopAll(): Promise<boolean[]>;
-    restart(names: string | string[]): Promise<boolean | boolean[]>;
-    restartAll(): Promise<boolean[]>;
-    kill(names: string | string[]): Promise<boolean | boolean[]>;
-    killAll(): Promise<boolean[]>;
-    status(names: string | string[]): Promise<MachineStatus | MachineStatus[]>;
-    statusAll(): Promise<MachineStatus[]>;
-    ip(names: string | string[]): Promise<string | string[]>;
-    ipAll(): Promise<string[]>;
-    url(names: string | string[]): Promise<string | string[]>;
-    urlAll(): Promise<string[]>;
-    upgrade(names: string | string[]): Promise<boolean | boolean[]>;
-    upgradeAll(): Promise<boolean[]>;
-    regenerateCert(names: string | string[]): Promise<boolean | boolean[]>;
-    regenerateAllCert(): Promise<boolean[]>;
-    ssh(names: string | string[], cmd: string): Promise<string | string[]>;
+    create(names: string | string[], driver: Driver, swarm?: Swarm): Promise<boolean | Map<boolean>>;
+    inspect(names: string | string[]): Promise<any | Map<any>>;
+    inspectAll(): Promise<Map<any>>;
+    remove(names: string | string[]): Promise<boolean | Map<boolean>>;
+    removeAll(): Promise<Map<boolean>>;
+    start(names: string | string[]): Promise<boolean | Map<boolean>>;
+    startAll(): Promise<Map<boolean>>;
+    stop(names: string | string[]): Promise<boolean | Map<boolean>>;
+    stopAll(): Promise<Map<boolean>>;
+    restart(names: string | string[]): Promise<boolean | Map<boolean>>;
+    restartAll(): Promise<Map<boolean>>;
+    kill(names: string | string[]): Promise<boolean | Map<boolean>>;
+    killAll(): Promise<Map<boolean>>;
+    status(names: string | string[]): Promise<MachineStatus | Map<MachineStatus>>;
+    statusAll(): Promise<Map<MachineStatus>>;
+    ip(names: string | string[]): Promise<string | Map<string>>;
+    ipAll(): Promise<Map<string>>;
+    url(names: string | string[]): Promise<string | Map<string>>;
+    urlAll(): Promise<Map<string>>;
+    upgrade(names: string | string[]): Promise<boolean | Map<boolean>>;
+    upgradeAll(): Promise<Map<boolean>>;
+    regenerateCert(names: string | string[]): Promise<boolean | Map<boolean>>;
+    regenerateAllCert(): Promise<Map<boolean>>;
+    ssh(names: string | string[], cmd: string): Promise<string | Map<string>>;
     scp(from: string, to: string, recursive: boolean): Promise<string>;
     active(): Promise<string>;
-    config(names: string | string[]): Promise<string | string[]>;
-    env(names: string | string[], config?: EnvConfig): Promise<string | string[]>;
-    protected _namesExec<R>(names: string | string[], fn: (name: string) => Promise<R>): Promise<R | R[]>;
-    protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<R[]>;
-    protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<R[]>;
+    config(names: string | string[]): Promise<string | Map<string>>;
+    env(names: string | string[], config?: EnvConfig): Promise<string | Map<string>>;
+    protected _namesExec<R>(names: string | string[], fn: (name: string) => Promise<R>): Promise<R | Map<R>>;
+    protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<Map<R>>;
+    protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<Map<R>>;
     protected _bexec(command: string[]): Promise<boolean>;
     protected _exec(command: string[]): Promise<string>;
 }

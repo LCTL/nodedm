@@ -12,7 +12,12 @@ describe('DockerMachine', function () {
         });
         it('should create virtualbox VM and named vbox0, vbox1, vbox2, vbox3', function (done) {
             return chai_1.expect(index_1.dm.create(['vbox0', 'vbox1', 'vbox2', 'vbox3'], vboxDriver)).to.eventually
-                .deep.equal([true, true, true, true]).notify(done);
+                .deep.equal({
+                vbox0: true,
+                vbox1: true,
+                vbox2: true,
+                vbox3: true
+            }).notify(done);
         });
     });
     describe('#ls', function () {
@@ -74,14 +79,29 @@ describe('DockerMachine', function () {
             .to.eventually.equal(index_1.MachineStatus.RUNNING).notify(done); });
         it('should return not exist status when name is vbox3', function (done) { return chai_1.expect(index_1.dm.status('vbox3'))
             .to.eventually.equal(index_1.MachineStatus.NOT_EXIST).notify(done); });
+        it('should return vbox0, vbox1, vbox2, vbox 3 status', function (done) { return chai_1.expect(index_1.dm.status(['vbox0', 'vbox1', 'vbox2', 'vbox3']))
+            .to.eventually.equal({
+            vbox0: index_1.MachineStatus.RUNNING,
+            vbox1: index_1.MachineStatus.STOPPED,
+            vbox2: index_1.MachineStatus.RUNNING,
+            vbox3: index_1.MachineStatus.NOT_EXIST
+        }).notify(done); });
     });
     describe('#kill', function () {
         it('should kill vbox0, vbox1, vbox2', function (done) { return chai_1.expect(index_1.dm.kill(['vbox0', 'vbox1', 'vbox2']))
-            .to.eventually.deep.equal([true, true, true]).notify(done); });
+            .to.eventually.deep.equal({
+            vbox0: true,
+            vbox1: true,
+            vbox2: true
+        }).notify(done); });
     });
     describe('#remove', function () {
         it('should remove vbox0, vbox1, vbox2', function (done) { return chai_1.expect(index_1.dm.remove(['vbox0', 'vbox1', 'vbox2']))
-            .to.eventually.deep.equal([true, true, true]).notify(done); });
+            .to.eventually.deep.equal({
+            vbox0: true,
+            vbox1: true,
+            vbox2: true
+        }).notify(done); });
     });
     describe('#create swarm', function () {
         var vboxDriver = new index_1.Driver('virtualbox', {
@@ -97,7 +117,11 @@ describe('DockerMachine', function () {
         it('should create swarm slave and named vbox1, vobx2, vbox3', function (done) {
             swarm.master = false;
             chai_1.expect(index_1.dm.create(['vbox1', 'vbox2', 'vbox3'], vboxDriver, swarm)).to.eventually
-                .deep.equal([true, true, true]).notify(done);
+                .deep.equal({
+                vbox1: true,
+                vbox2: true,
+                vbox3: true
+            }).notify(done);
         });
     });
     describe('#list', function () {
@@ -106,10 +130,20 @@ describe('DockerMachine', function () {
     });
     describe('#killAll', function () {
         it('should kill all vbox', function (done) { return chai_1.expect(index_1.dm.killAll())
-            .to.eventually.deep.equal([true, true, true, true]).notify(done); });
+            .to.eventually.deep.equal({
+            vbox0: true,
+            vbox1: true,
+            vbox2: true,
+            vbox3: true
+        }).notify(done); });
     });
     describe('#removeAll', function () {
         it('should remove all vbox', function (done) { return chai_1.expect(index_1.dm.removeAll())
-            .to.eventually.deep.equal([true, true, true, true]).notify(done); });
+            .to.eventually.deep.equal({
+            vbox0: true,
+            vbox1: true,
+            vbox2: true,
+            vbox3: true
+        }).notify(done); });
     });
 });

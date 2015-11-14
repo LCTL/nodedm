@@ -271,8 +271,20 @@ var DockerMachine = (function () {
     DockerMachine.prototype._batchExec = function (names, fn) {
         var _this = this;
         var promises = [];
-        names.forEach(function (name) { return promises.push(fn.apply(_this, [name])); });
-        return es6_promise_1.Promise.all(promises);
+        names.forEach(function (name) {
+            var pramise = fn.apply(_this, [name]).then(function (result) {
+                return {
+                    name: name,
+                    value: result
+                };
+            });
+            promises.push(pramise);
+        });
+        return es6_promise_1.Promise.all(promises).then(function (entries) {
+            var map = {};
+            entries.forEach(function (entry) { return map[entry.name] = entry.value; });
+            return map;
+        });
     };
     DockerMachine.prototype._bexec = function (command) {
         return this._exec(command).then(function (out) { return true; });

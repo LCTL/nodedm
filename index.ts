@@ -16,11 +16,20 @@ export interface EnvConfig {
   unset?: boolean;
 }
 
+export interface Entry<R> {
+  name: string;
+  value: R;
+}
+
+export interface Map<R> {
+  [name: string]: R;
+}
+
 export class Driver {
 
-  options: { [key: string]: string; } = {};
+  options: Map<string> = {};
 
-  constructor(public name: string, options?: { [key: string]: string; }) {
+  constructor(public name: string, options?: Map<string>) {
     if (!options) {
       this.options = options;
     }
@@ -153,7 +162,7 @@ export class DockerMachine {
     });
   };
 
-  create(names: string|string[], driver: Driver, swarm?: Swarm): Promise<boolean|boolean[]> {
+  create(names: string|string[], driver: Driver, swarm?: Swarm): Promise<boolean|Map<boolean>> {
     var fn = (name: string) => {
       var options: string[] = ['create', name].concat(driver.toCommandOptions());
       if (swarm) {
@@ -164,61 +173,61 @@ export class DockerMachine {
     return this._namesExec(names, fn);
   }
 
-  inspect(names: string|string[]): Promise<any|any[]> {
+  inspect(names: string|string[]): Promise<any|Map<any>> {
     var fn = (name: string) => this._exec(['inspect', name]).then((out: string) => JSON.parse(out));
     return this._namesExec(names, fn);
   }
 
-  inspectAll(): Promise<any[]> {
+  inspectAll(): Promise<Map<any>> {
     return this._listExec(this.inspect);
   }
 
-  remove(names: string|string[]): Promise<boolean|boolean[]> {
+  remove(names: string|string[]): Promise<boolean|Map<boolean>> {
     var fn = (name: string) => this._bexec(['rm', name]);
     return this._namesExec(names, fn);
   }
 
-  removeAll(): Promise<boolean[]> {
+  removeAll(): Promise<Map<boolean>> {
     return this._listExec(this.remove);
   }
 
-  start(names: string|string[]): Promise<boolean|boolean[]> {
+  start(names: string|string[]): Promise<boolean|Map<boolean>> {
     var fn = (name: string) => this._bexec(['start', name]);
     return this._namesExec(names, fn);
   }
 
-  startAll(): Promise<boolean[]> {
+  startAll(): Promise<Map<boolean>> {
     return this._listExec(this.start);
   }
 
-  stop(names: string|string[]): Promise<boolean|boolean[]> {
+  stop(names: string|string[]): Promise<boolean|Map<boolean>> {
     var fn = (name: string) => this._bexec(['stop', name]);
     return this._namesExec(names, fn);
   }
 
-  stopAll(): Promise<boolean[]> {
+  stopAll(): Promise<Map<boolean>> {
     return this._listExec(this.stop);
   }
 
-  restart(names: string|string[]): Promise<boolean|boolean[]> {
+  restart(names: string|string[]): Promise<boolean|Map<boolean>> {
     var fn = (name: string) => this._bexec(['restart', name]);
     return this._namesExec(names, fn);
   }
 
-  restartAll(): Promise<boolean[]> {
+  restartAll(): Promise<Map<boolean>> {
     return this._listExec(this.restart);
   }
 
-  kill(names: string|string[]): Promise<boolean|boolean[]> {
+  kill(names: string|string[]): Promise<boolean|Map<boolean>> {
     var fn = (name: string) => this._bexec(['kill', name]);
     return this._namesExec(names, fn);
   }
 
-  killAll(): Promise<boolean[]> {
+  killAll(): Promise<Map<boolean>> {
     return this._listExec(this.kill);
   }
 
-  status(names: string|string[]): Promise<MachineStatus|MachineStatus[]> {
+  status(names: string|string[]): Promise<MachineStatus|Map<MachineStatus>> {
     var _this = this;
     var fn = (name: string) => {
       return new Promise<MachineStatus>((resolve, reject) => {
@@ -236,47 +245,47 @@ export class DockerMachine {
     return this._namesExec(names, fn);
   };
 
-  statusAll(): Promise<MachineStatus[]> {
+  statusAll(): Promise<Map<MachineStatus>> {
     return this._listExec(this.status);
   }
 
-  ip(names: string|string[]): Promise<string|string[]> {
+  ip(names: string|string[]): Promise<string|Map<string>> {
     var fn = (name: string) => this._exec(['ip', name]);
     return this._namesExec(names, fn);
   }
 
-  ipAll(): Promise<string[]> {
+  ipAll(): Promise<Map<string>> {
     return this._listExec(this.ip);
   }
 
-  url(names: string|string[]): Promise<string|string[]> {
+  url(names: string|string[]): Promise<string|Map<string>> {
     var fn = (name: string) => this._exec(['url', name]);
     return this._namesExec(names, fn);
   }
 
-  urlAll(): Promise<string[]> {
+  urlAll(): Promise<Map<string>> {
     return this._listExec(this.url);
   }
 
-  upgrade(names: string|string[]): Promise<boolean|boolean[]> {
+  upgrade(names: string|string[]): Promise<boolean|Map<boolean>> {
     var fn = (name: string) => this._bexec(['upgrade', name]);
     return this._namesExec(names, fn);
   }
 
-  upgradeAll(): Promise<boolean[]> {
+  upgradeAll(): Promise<Map<boolean>> {
     return this._listExec(this.upgrade);
   }
 
-  regenerateCert(names: string|string[]): Promise<boolean|boolean[]> {
+  regenerateCert(names: string|string[]): Promise<boolean|Map<boolean>> {
     var fn = (name: string) => this._bexec(['regenerate-certs', '-f', name]);
     return this._namesExec(names, fn);
   }
 
-  regenerateAllCert(): Promise<boolean[]> {
+  regenerateAllCert(): Promise<Map<boolean>> {
     return this._listExec(this.regenerateCert);
   }
 
-  ssh(names: string|string[], cmd: string): Promise<string|string[]> {
+  ssh(names: string|string[], cmd: string): Promise<string|Map<string>> {
     var fn = (name: string) => this._exec(['ssh', name, '"' + cmd + '"']);
     return this._namesExec(names, fn);
   }
@@ -294,12 +303,12 @@ export class DockerMachine {
     return this._exec(['active']);
   }
 
-  config(names: string|string[]): Promise<string|string[]>{
+  config(names: string|string[]): Promise<string|Map<string>>{
     var fn = (name: string) => this._exec(['config', name]);
     return this._namesExec(names, fn);
   }
 
-  env(names: string|string[], config?: EnvConfig): Promise<string|string[]>{
+  env(names: string|string[], config?: EnvConfig): Promise<string|Map<string>>{
     var fn = (name: string) => {
       var command = ['env', name]
       var fn = null;
@@ -322,11 +331,11 @@ export class DockerMachine {
     return this._namesExec(names, fn);
   }
 
-  protected _namesExec<R>(names: string|string[], fn: (name: string) => Promise<R>): Promise<R|R[]> {
+  protected _namesExec<R>(names: string|string[], fn: (name: string) => Promise<R>): Promise<R|Map<R>> {
     return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);
   }
 
-  protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<R[]> {
+  protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<Map<R>> {
     var _this = this;
     return _this.ls().then((machines: Machine[]) => {
       var names: string[] = machines.map((machine: Machine) => machine.name);
@@ -334,11 +343,23 @@ export class DockerMachine {
     })
   }
 
-  protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<R[]> {
+  protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<Map<R>> {
     var _this = this;
-    var promises: Promise<R>[] = [];
-    names.forEach((name) => promises.push(fn.apply(_this, [name])));
-    return Promise.all(promises);
+    var promises: Promise<Entry<R>>[] = [];
+    names.forEach((name) => {
+      var pramise = fn.apply(_this, [name]).then((result:R) => {
+        return {
+          name: name,
+          value: result
+        };
+      });
+      promises.push(pramise);
+    });
+    return Promise.all(promises).then((entries: Entry<R>[]) => {
+      var map: Map<R> = {};
+      entries.forEach((entry:Entry<R>) => map[entry.name] = entry.value)
+      return map;
+    });
   }
 
   protected _bexec(command: string[]): Promise<boolean> {
