@@ -82,7 +82,7 @@ exports.MachineStatus = MachineStatus;
 var DockerMachine = (function () {
     function DockerMachine() {
     }
-    DockerMachine.prototype.list = function () {
+    DockerMachine.prototype.ls = function () {
         var _this = this;
         return new es6_promise_1.Promise(function (resolve, reject) {
             _this._exec(['ls']).then(function (out) {
@@ -263,7 +263,7 @@ var DockerMachine = (function () {
     };
     DockerMachine.prototype._listExec = function (fn) {
         var _this = this;
-        return _this.list().then(function (machines) {
+        return _this.ls().then(function (machines) {
             var names = machines.map(function (machine) { return machine.name; });
             return _this._batchExec(names, fn);
         });

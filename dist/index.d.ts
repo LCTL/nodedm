@@ -43,7 +43,7 @@ export declare class MachineStatus {
     constructor(value: string);
 }
 export declare class DockerMachine {
-    list(): Promise<Machine[]>;
+    ls(): Promise<Machine[]>;
     create(names: string | string[], driver: Driver, swarm?: Swarm): Promise<boolean | boolean[]>;
     inspect(names: string | string[]): Promise<any | any[]>;
     inspectAll(): Promise<any[]>;

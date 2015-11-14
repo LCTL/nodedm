@@ -22,10 +22,10 @@ describe('DockerMachine', () => {
 
   });
 
-  describe('#list', () => {
+  describe('#ls', () => {
 
     it('should return list of machine',
-      (done) => expect(dm.list())
+      (done) => expect(dm.ls())
         .to.eventually.deep.property('[0].name', 'vbox0').notify(done));
 
   });
@@ -186,7 +186,7 @@ describe('DockerMachine', () => {
   describe('#list', () => {
 
     it('should return list and swarm master is vbox0 ',
-      (done) => expect(dm.list())
+      (done) => expect(dm.ls())
         .to.eventually.deep.property('[1].swarm', 'vbox0').notify(done));
 
   });

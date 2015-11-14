@@ -15,8 +15,8 @@ describe('DockerMachine', function () {
                 .deep.equal([true, true, true, true]).notify(done);
         });
     });
-    describe('#list', function () {
-        it('should return list of machine', function (done) { return chai_1.expect(index_1.dm.list())
+    describe('#ls', function () {
+        it('should return list of machine', function (done) { return chai_1.expect(index_1.dm.ls())
             .to.eventually.deep.property('[0].name', 'vbox0').notify(done); });
     });
     describe('#inspect', function () {
@@ -101,7 +101,7 @@ describe('DockerMachine', function () {
         });
     });
     describe('#list', function () {
-        it('should return list and swarm master is vbox0 ', function (done) { return chai_1.expect(index_1.dm.list())
+        it('should return list and swarm master is vbox0 ', function (done) { return chai_1.expect(index_1.dm.ls())
             .to.eventually.deep.property('[1].swarm', 'vbox0').notify(done); });
     });
     describe('#killAll', function () {

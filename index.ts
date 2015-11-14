@@ -109,7 +109,7 @@ export class MachineStatus {
 
 export class DockerMachine {
 
-  list(): Promise<Machine[]> {
+  ls(): Promise<Machine[]> {
 
     var _this = this;
 
@@ -328,7 +328,7 @@ export class DockerMachine {
 
   protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<R[]> {
     var _this = this;
-    return _this.list().then((machines: Machine[]) => {
+    return _this.ls().then((machines: Machine[]) => {
       var names: string[] = machines.map((machine: Machine) => machine.name);
       return _this._batchExec(names, fn);
     })
