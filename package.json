@@ -1,6 +1,6 @@
 {
   "name": "nodedm",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Integrate docker machine and NodeJS",
   "main": "dist/index.js",
   "typescript": {
