@@ -80,7 +80,7 @@ describe('DockerMachine', function () {
         it('should return not exist status when name is vbox3', function (done) { return chai_1.expect(index_1.dm.status('vbox3'))
             .to.eventually.equal(index_1.MachineStatus.NOT_EXIST).notify(done); });
         it('should return vbox0, vbox1, vbox2, vbox 3 status', function (done) { return chai_1.expect(index_1.dm.status(['vbox0', 'vbox1', 'vbox2', 'vbox3']))
-            .to.eventually.equal({
+            .to.eventually.deep.equal({
             vbox0: index_1.MachineStatus.RUNNING,
             vbox1: index_1.MachineStatus.STOPPED,
             vbox2: index_1.MachineStatus.RUNNING,

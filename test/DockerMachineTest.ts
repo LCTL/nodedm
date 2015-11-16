@@ -149,7 +149,7 @@ describe('DockerMachine', () => {
 
     it('should return vbox0, vbox1, vbox2, vbox 3 status',
       (done) => expect(dm.status(['vbox0', 'vbox1', 'vbox2', 'vbox3']))
-        .to.eventually.equal({
+        .to.eventually.deep.equal({
           vbox0: MachineStatus.RUNNING,
           vbox1: MachineStatus.STOPPED,
           vbox2: MachineStatus.RUNNING,

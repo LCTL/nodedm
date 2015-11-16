@@ -53,23 +53,22 @@ var Swarm = (function () {
 })();
 exports.Swarm = Swarm;
 var MachineStatus = (function () {
-    function MachineStatus(value) {
-        this.value = value;
+    function MachineStatus() {
     }
     MachineStatus.valueOf = function (state) {
         for (var _i = 0, _a = MachineStatus.ALL; _i < _a.length; _i++) {
             var status_1 = _a[_i];
-            if (state.toLowerCase() === status_1.value.toLowerCase()) {
+            if (state.toLowerCase() === status_1.toLowerCase()) {
                 return status_1;
             }
         }
         return MachineStatus.NOT_EXIST;
     };
-    MachineStatus.STOPPED = new MachineStatus('Stopped');
-    MachineStatus.RUNNING = new MachineStatus('Running');
-    MachineStatus.TIMEOUT = new MachineStatus('Timeout');
-    MachineStatus.ERROR = new MachineStatus('Error');
-    MachineStatus.NOT_EXIST = new MachineStatus('Not Exist');
+    MachineStatus.STOPPED = 'Stopped';
+    MachineStatus.RUNNING = 'Running';
+    MachineStatus.TIMEOUT = 'Timeout';
+    MachineStatus.ERROR = 'Error';
+    MachineStatus.NOT_EXIST = 'Not Exist';
     MachineStatus.ALL = [
         MachineStatus.STOPPED,
         MachineStatus.RUNNING,

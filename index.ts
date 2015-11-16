@@ -90,29 +90,27 @@ export class Swarm {
 
 export class MachineStatus {
 
-  static STOPPED: MachineStatus = new MachineStatus('Stopped');
-  static RUNNING: MachineStatus = new MachineStatus('Running');
-  static TIMEOUT: MachineStatus = new MachineStatus('Timeout');
-  static ERROR: MachineStatus = new MachineStatus('Error');
-  static NOT_EXIST: MachineStatus = new MachineStatus('Not Exist');
+  static STOPPED: string = 'Stopped';
+  static RUNNING: string = 'Running';
+  static TIMEOUT: string = 'Timeout';
+  static ERROR: string = 'Error';
+  static NOT_EXIST: string = 'Not Exist';
 
-  static ALL: MachineStatus[] = [
+  static ALL: string[] = [
     MachineStatus.STOPPED,
     MachineStatus.RUNNING,
     MachineStatus.TIMEOUT,
     MachineStatus.ERROR,
     MachineStatus.NOT_EXIST];
 
-  static valueOf(state: string): MachineStatus {
+  static valueOf(state: string): string {
     for (let status of MachineStatus.ALL) {
-      if (state.toLowerCase() === status.value.toLowerCase()) {
+      if (state.toLowerCase() === status.toLowerCase()) {
         return status;
       }
     }
     return MachineStatus.NOT_EXIST;
   }
-
-  constructor(private value: string) { }
 
 }
 
@@ -227,10 +225,10 @@ export class DockerMachine {
     return this._listExec(this.kill);
   }
 
-  status(names: string|string[]): Promise<MachineStatus|Map<MachineStatus>> {
+  status(names: string|string[]): Promise<string|Map<string>> {
     var _this = this;
     var fn = (name: string) => {
-      return new Promise<MachineStatus>((resolve, reject) => {
+      return new Promise<string>((resolve, reject) => {
         _this._exec(['status', name]).then((out: string) => {
           resolve(MachineStatus.valueOf(out))
         }).catch((out: string) => {
@@ -245,7 +243,7 @@ export class DockerMachine {
     return this._namesExec(names, fn);
   };
 
-  statusAll(): Promise<Map<MachineStatus>> {
+  statusAll(): Promise<Map<string>> {
     return this._listExec(this.status);
   }
 
