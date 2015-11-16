@@ -1,40 +1,5 @@
 var child_process = require('child_process');
 var es6_promise_1 = require('es6-promise');
-var Swarm = (function () {
-    function Swarm() {
-        this.master = false;
-        this.opts = [];
-    }
-    Swarm.prototype.toCommandOptions = function () {
-        var options = ['--swarm'];
-        if (this.master) {
-            options.push('--swarm-master');
-        }
-        this._push(options, 'swarm-discovery', this.discovery, function (name) {
-            throw new Error('Swarm discovery option cannot be empty');
-        });
-        this._push(options, 'swarm-strategy', this.strategy);
-        this._push(options, 'swarm-host', this.host);
-        this._push(options, 'swarm-addr', this.addr);
-        this._push(options, 'swarm-strategy', this.strategy);
-        for (var _i = 0, _a = this.opts; _i < _a.length; _i++) {
-            var opt = _a[_i];
-            this._push(options, 'swarm-opt', opt);
-        }
-        return options;
-    };
-    Swarm.prototype._push = function (options, name, value, emptyCallback) {
-        if (value) {
-            options.push('--' + name);
-            options.push(value);
-        }
-        else if (emptyCallback) {
-            emptyCallback(name);
-        }
-    };
-    return Swarm;
-})();
-exports.Swarm = Swarm;
 var MachineStatus = (function () {
     function MachineStatus() {
     }
@@ -93,7 +58,7 @@ var DockerMachine = (function () {
         var fn = function (name) {
             var options = ['create', name].concat(_this._driveOptions(driver));
             if (swarm) {
-                options = options.concat(swarm.toCommandOptions());
+                options = options.concat(_this._swarmOptions(swarm));
             }
             return _this._bexec(options);
         };
@@ -248,6 +213,30 @@ var DockerMachine = (function () {
         optionValues = ['-d', driver.name];
         Object.keys(driver.options).forEach(function (key) { return optionValues = optionValues.concat(['--' + key, driver.options[key]]); });
         return optionValues;
+    };
+    DockerMachine.prototype._swarmOptions = function (swarm) {
+        var options = ['--swarm'];
+        if (swarm.master) {
+            options.push('--swarm-master');
+        }
+        this._pushSwarmOption(options, 'swarm-discovery', swarm.discovery);
+        this._pushSwarmOption(options, 'swarm-strategy', swarm.strategy);
+        this._pushSwarmOption(options, 'swarm-host', swarm.host);
+        this._pushSwarmOption(options, 'swarm-addr', swarm.addr);
+        this._pushSwarmOption(options, 'swarm-strategy', swarm.strategy);
+        if (swarm.opts) {
+            for (var _i = 0, _a = swarm.opts; _i < _a.length; _i++) {
+                var opt = _a[_i];
+                this._pushSwarmOption(options, 'swarm-opt', opt);
+            }
+        }
+        return options;
+    };
+    DockerMachine.prototype._pushSwarmOption = function (options, name, value) {
+        if (value) {
+            options.push('--' + name);
+            options.push(value);
+        }
     };
     DockerMachine.prototype._namesExec = function (names, fn) {
         return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);

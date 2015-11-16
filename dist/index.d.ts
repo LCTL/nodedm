@@ -22,15 +22,13 @@ export interface Driver {
     name: string;
     options: Map<string>;
 }
-export declare class Swarm {
+export interface Swarm {
     master: boolean;
-    discovery: string;
-    strategy: string;
-    host: string;
-    addr: string;
-    opts: string[];
-    toCommandOptions(): string[];
-    protected _push(options: string[], name: string, value: string, emptyCallback?: (name: string) => void): void;
+    discovery?: string;
+    host?: string;
+    addr?: string;
+    strategy?: string;
+    opts?: string[];
 }
 export declare class MachineStatus {
     static STOPPED: string;
@@ -72,6 +70,8 @@ export declare class DockerMachine {
     config(names: string | string[]): Promise<string | Map<string>>;
     env(names: string | string[], config?: EnvConfig): Promise<string | Map<string>>;
     protected _driveOptions(driver: Driver): string[];
+    protected _swarmOptions(swarm: Swarm): string[];
+    protected _pushSwarmOption(options: string[], name: string, value: string): void;
     protected _namesExec<R>(names: string | string[], fn: (name: string) => Promise<R>): Promise<R | Map<R>>;
     protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<Map<R>>;
     protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<Map<R>>;

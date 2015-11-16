@@ -113,9 +113,10 @@ describe('DockerMachine', function () {
                 'virtualbox-memory': '512'
             }
         };
-        var swarm = new index_1.Swarm();
-        swarm.master = true;
-        swarm.discovery = 'token://1234';
+        var swarm = {
+            master: true,
+            discovery: 'token://1234'
+        };
         it('should create swarm master and named vbox0', function (done) {
             return chai_1.expect(index_1.dm.create('vbox0', vboxDriver, swarm)).to.eventually
                 .deep.equal(true).notify(done);

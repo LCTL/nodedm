@@ -194,10 +194,10 @@ describe('DockerMachine', () => {
         'virtualbox-memory': '512'
       }
     };
-    var swarm: Swarm = new Swarm();
-
-    swarm.master = true;
-    swarm.discovery = 'token://1234'
+    var swarm: Swarm = {
+      master: true,
+      discovery: 'token://1234'
+    };
 
     it('should create swarm master and named vbox0', (done) =>
       expect(dm.create('vbox0', vboxDriver, swarm)).to.eventually

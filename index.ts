@@ -30,49 +30,13 @@ export interface Driver {
   options: Map<string>;
 }
 
-export class Swarm {
-
-  master: boolean = false;
-  discovery: string;
-  strategy: string;
-  host: string;
-  addr: string;
-  opts: string[] = [];
-
-  toCommandOptions(): string[] {
-
-    var options: string[] = ['--swarm'];
-
-    if (this.master) {
-      options.push('--swarm-master');
-    }
-
-    this._push(options, 'swarm-discovery', this.discovery, (name) => {
-      throw new Error('Swarm discovery option cannot be empty');
-    });
-
-    this._push(options, 'swarm-strategy', this.strategy);
-    this._push(options, 'swarm-host', this.host);
-    this._push(options, 'swarm-addr', this.addr);
-    this._push(options, 'swarm-strategy', this.strategy);
-
-    for (var opt of this.opts) {
-      this._push(options, 'swarm-opt', opt);
-    }
-
-    return options;
-
-  }
-
-  protected _push(options: string[], name: string, value: string, emptyCallback?: (name: string) => void) {
-    if (value) {
-      options.push('--' + name);
-      options.push(value);
-    } else if (emptyCallback) {
-      emptyCallback(name);
-    }
-  }
-
+export interface Swarm {
+  master: boolean;
+  discovery?: string;
+  host?: string;
+  addr?: string;
+  strategy?: string;
+  opts?: string[];
 }
 
 export class MachineStatus {
@@ -151,7 +115,7 @@ export class DockerMachine {
     var fn = (name: string) => {
       var options: string[] = ['create', name].concat(this._driveOptions(driver));
       if (swarm) {
-        options = options.concat(swarm.toCommandOptions());
+        options = options.concat(this._swarmOptions(swarm));
       }
       return this._bexec(options);
     }
@@ -284,16 +248,16 @@ export class DockerMachine {
     return this._exec(command);
   }
 
-  active(): Promise<string>{
+  active(): Promise<string> {
     return this._exec(['active']);
   }
 
-  config(names: string|string[]): Promise<string|Map<string>>{
+  config(names: string|string[]): Promise<string|Map<string>> {
     var fn = (name: string) => this._exec(['config', name]);
     return this._namesExec(names, fn);
   }
 
-  env(names: string|string[], config?: EnvConfig): Promise<string|Map<string>>{
+  env(names: string|string[], config?: EnvConfig): Promise<string|Map<string>> {
     var fn = (name: string) => {
       var command = ['env', name]
       var fn = null;
@@ -328,6 +292,35 @@ export class DockerMachine {
     return optionValues;
   }
 
+  protected _swarmOptions(swarm: Swarm): string[] {
+    var options: string[] = ['--swarm'];
+
+    if (swarm.master) {
+      options.push('--swarm-master');
+    }
+
+    this._pushSwarmOption(options, 'swarm-discovery', swarm.discovery);
+    this._pushSwarmOption(options, 'swarm-strategy', swarm.strategy);
+    this._pushSwarmOption(options, 'swarm-host', swarm.host);
+    this._pushSwarmOption(options, 'swarm-addr', swarm.addr);
+    this._pushSwarmOption(options, 'swarm-strategy', swarm.strategy);
+
+    if (swarm.opts) {
+      for (var opt of swarm.opts) {
+        this._pushSwarmOption(options, 'swarm-opt', opt);
+      }
+    }
+
+    return options;
+  }
+
+  protected _pushSwarmOption(options: string[], name: string, value: string) {
+    if (value) {
+      options.push('--' + name);
+      options.push(value);
+    }
+  }
+
   protected _namesExec<R>(names: string|string[], fn: (name: string) => Promise<R>): Promise<R|Map<R>> {
     return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);
   }
@@ -344,7 +337,7 @@ export class DockerMachine {
     var _this = this;
     var promises: Promise<Entry<R>>[] = [];
     names.forEach((name) => {
-      var pramise = fn.apply(_this, [name]).then((result:R) => {
+      var pramise = fn.apply(_this, [name]).then((result: R) => {
         return {
           name: name,
           value: result
@@ -354,7 +347,7 @@ export class DockerMachine {
     });
     return Promise.all(promises).then((entries: Entry<R>[]) => {
       var map: Map<R> = {};
-      entries.forEach((entry:Entry<R>) => map[entry.name] = entry.value)
+      entries.forEach((entry: Entry<R>) => map[entry.name] = entry.value)
       return map;
     });
   }
