@@ -7,9 +7,12 @@ console.log("!!! Warning !!!");
 console.log("!!! This test will remove all existing docker machine and cannot be revert !!!");
 describe('DockerMachine', function () {
     describe('#create', function () {
-        var vboxDriver = new index_1.Driver('virtualbox', {
-            'virtualbox-memory': '512'
-        });
+        var vboxDriver = {
+            name: 'virtualbox',
+            options: {
+                'virtualbox-memory': '512'
+            }
+        };
         it('should create virtualbox VM and named vbox0, vbox1, vbox2, vbox3', function (done) {
             return chai_1.expect(index_1.dm.create(['vbox0', 'vbox1', 'vbox2', 'vbox3'], vboxDriver)).to.eventually
                 .deep.equal({
@@ -104,9 +107,12 @@ describe('DockerMachine', function () {
         }).notify(done); });
     });
     describe('#create swarm', function () {
-        var vboxDriver = new index_1.Driver('virtualbox', {
-            'virtualbox-memory': '512'
-        });
+        var vboxDriver = {
+            name: 'virtualbox',
+            options: {
+                'virtualbox-memory': '512'
+            }
+        };
         var swarm = new index_1.Swarm();
         swarm.master = true;
         swarm.discovery = 'token://1234';

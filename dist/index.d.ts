@@ -18,11 +18,9 @@ export interface Entry<R> {
 export interface Map<R> {
     [name: string]: R;
 }
-export declare class Driver {
+export interface Driver {
     name: string;
     options: Map<string>;
-    constructor(name: string, options?: Map<string>);
-    toCommandOptions(): string[];
 }
 export declare class Swarm {
     master: boolean;
@@ -73,6 +71,7 @@ export declare class DockerMachine {
     active(): Promise<string>;
     config(names: string | string[]): Promise<string | Map<string>>;
     env(names: string | string[], config?: EnvConfig): Promise<string | Map<string>>;
+    protected _driveOptions(driver: Driver): string[];
     protected _namesExec<R>(names: string | string[], fn: (name: string) => Promise<R>): Promise<R | Map<R>>;
     protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<Map<R>>;
     protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<Map<R>>;

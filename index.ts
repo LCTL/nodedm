@@ -25,22 +25,9 @@ export interface Map<R> {
   [name: string]: R;
 }
 
-export class Driver {
-
-  options: Map<string> = {};
-
-  constructor(public name: string, options?: Map<string>) {
-    if (!options) {
-      this.options = options;
-    }
-  }
-
-  toCommandOptions(): string[] {
-    var optionValues: string[] = ['-d', this.name];
-    Object.keys(this.options).forEach((key) => optionValues = optionValues.concat(['--' + key, this.options[key]]));
-    return optionValues;
-  }
-
+export interface Driver {
+  name: string;
+  options: Map<string>;
 }
 
 export class Swarm {
@@ -162,7 +149,7 @@ export class DockerMachine {
 
   create(names: string|string[], driver: Driver, swarm?: Swarm): Promise<boolean|Map<boolean>> {
     var fn = (name: string) => {
-      var options: string[] = ['create', name].concat(driver.toCommandOptions());
+      var options: string[] = ['create', name].concat(this._driveOptions(driver));
       if (swarm) {
         options = options.concat(swarm.toCommandOptions());
       }
@@ -327,6 +314,18 @@ export class DockerMachine {
     }
 
     return this._namesExec(names, fn);
+  }
+
+  protected _driveOptions(driver: Driver): string[] {
+    var optionValues: string[];
+
+    if (!driver.name) {
+      throw new Error("Must provide driver name");
+    }
+
+    optionValues = ['-d', driver.name];
+    Object.keys(driver.options).forEach(key => optionValues = optionValues.concat(['--' + key, driver.options[key]]));
+    return optionValues;
   }
 
   protected _namesExec<R>(names: string|string[], fn: (name: string) => Promise<R>): Promise<R|Map<R>> {

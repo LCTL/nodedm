@@ -12,9 +12,12 @@ describe('DockerMachine', () => {
 
   describe('#create', () => {
 
-    var vboxDriver: Driver = new Driver('virtualbox', {
-      'virtualbox-memory': '512'
-    });
+    var vboxDriver: Driver = {
+      name: 'virtualbox',
+      options: {
+        'virtualbox-memory': '512'
+      }
+    };
 
     it('should create virtualbox VM and named vbox0, vbox1, vbox2, vbox3', (done) =>
       expect(dm.create(['vbox0', 'vbox1', 'vbox2', 'vbox3'], vboxDriver)).to.eventually
@@ -185,9 +188,12 @@ describe('DockerMachine', () => {
 
   describe('#create swarm', () => {
 
-    var vboxDriver: Driver = new Driver('virtualbox', {
-      'virtualbox-memory': '512'
-    });
+    var vboxDriver: Driver = {
+      name: 'virtualbox',
+      options: {
+        'virtualbox-memory': '512'
+      }
+    };
     var swarm: Swarm = new Swarm();
 
     swarm.master = true;

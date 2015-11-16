@@ -1,22 +1,5 @@
 var child_process = require('child_process');
 var es6_promise_1 = require('es6-promise');
-var Driver = (function () {
-    function Driver(name, options) {
-        this.name = name;
-        this.options = {};
-        if (!options) {
-            this.options = options;
-        }
-    }
-    Driver.prototype.toCommandOptions = function () {
-        var _this = this;
-        var optionValues = ['-d', this.name];
-        Object.keys(this.options).forEach(function (key) { return optionValues = optionValues.concat(['--' + key, _this.options[key]]); });
-        return optionValues;
-    };
-    return Driver;
-})();
-exports.Driver = Driver;
 var Swarm = (function () {
     function Swarm() {
         this.master = false;
@@ -108,7 +91,7 @@ var DockerMachine = (function () {
     DockerMachine.prototype.create = function (names, driver, swarm) {
         var _this = this;
         var fn = function (name) {
-            var options = ['create', name].concat(driver.toCommandOptions());
+            var options = ['create', name].concat(_this._driveOptions(driver));
             if (swarm) {
                 options = options.concat(swarm.toCommandOptions());
             }
@@ -256,6 +239,15 @@ var DockerMachine = (function () {
             return _this._exec(command);
         };
         return this._namesExec(names, fn);
+    };
+    DockerMachine.prototype._driveOptions = function (driver) {
+        var optionValues;
+        if (!driver.name) {
+            throw new Error("Must provide driver name");
+        }
+        optionValues = ['-d', driver.name];
+        Object.keys(driver.options).forEach(function (key) { return optionValues = optionValues.concat(['--' + key, driver.options[key]]); });
+        return optionValues;
     };
     DockerMachine.prototype._namesExec = function (names, fn) {
         return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);
