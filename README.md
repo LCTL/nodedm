@@ -18,7 +18,7 @@ NodeDM communicate with docker-machine command, so you must install Docker Machi
 
 3. `tsd link`
 
-### Support command:
+### Supported command:
 
 - [x] active
 - [x] config
