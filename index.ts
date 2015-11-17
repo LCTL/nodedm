@@ -67,6 +67,76 @@ export class MachineStatus {
 
 export class DockerMachine {
 
+  active(): Promise<string> {
+    return this._exec(['active']);
+  }
+
+  config(names: string|string[]): Promise<string|Map<string>> {
+    var fn = (name: string) => this._exec(['config', name]);
+    return this._namesExec(names, fn);
+  }
+
+  create(names: string|string[], driver: Driver, swarm?: Swarm): Promise<boolean|Map<boolean>> {
+    var fn = (name: string) => {
+      var options: string[] = ['create', name].concat(this._driveOptions(driver));
+      if (swarm) {
+        options = options.concat(this._swarmOptions(swarm));
+      }
+      return this._bexec(options);
+    }
+    return this._namesExec(names, fn);
+  }
+
+  env(names: string|string[], config?: EnvConfig): Promise<string|Map<string>> {
+    var fn = (name: string) => {
+      var command = ['env', name]
+      var fn = null;
+
+      if (config.swarm === true) {
+        command.push('--swarm')
+      }
+
+      if (config.shell) {
+        command = command.concat(['--shell', config.shell])
+      }
+
+      if (config.unset === true) {
+        command = command.concat(['--unset'])
+      }
+
+      return this._exec(command);
+    }
+
+    return this._namesExec(names, fn);
+  }
+
+  inspect(names: string|string[]): Promise<any|Map<any>> {
+    var fn = (name: string) => this._exec(['inspect', name]).then((out: string) => JSON.parse(out));
+    return this._namesExec(names, fn);
+  }
+
+  inspectAll(): Promise<Map<any>> {
+    return this._listExec(this.inspect);
+  }
+
+  ip(names: string|string[]): Promise<string|Map<string>> {
+    var fn = (name: string) => this._exec(['ip', name]);
+    return this._namesExec(names, fn);
+  }
+
+  ipAll(): Promise<Map<string>> {
+    return this._listExec(this.ip);
+  }
+
+  kill(names: string|string[]): Promise<boolean|Map<boolean>> {
+    var fn = (name: string) => this._bexec(['kill', name]);
+    return this._namesExec(names, fn);
+  }
+
+  killAll(): Promise<Map<boolean>> {
+    return this._listExec(this.kill);
+  }
+
   ls(): Promise<Machine[]> {
 
     var _this = this;
@@ -111,24 +181,22 @@ export class DockerMachine {
     });
   };
 
-  create(names: string|string[], driver: Driver, swarm?: Swarm): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => {
-      var options: string[] = ['create', name].concat(this._driveOptions(driver));
-      if (swarm) {
-        options = options.concat(this._swarmOptions(swarm));
-      }
-      return this._bexec(options);
-    }
+  regenerateCert(names: string|string[]): Promise<boolean|Map<boolean>> {
+    var fn = (name: string) => this._bexec(['regenerate-certs', '-f', name]);
     return this._namesExec(names, fn);
   }
 
-  inspect(names: string|string[]): Promise<any|Map<any>> {
-    var fn = (name: string) => this._exec(['inspect', name]).then((out: string) => JSON.parse(out));
+  regenerateAllCert(): Promise<Map<boolean>> {
+    return this._listExec(this.regenerateCert);
+  }
+
+  restart(names: string|string[]): Promise<boolean|Map<boolean>> {
+    var fn = (name: string) => this._bexec(['restart', name]);
     return this._namesExec(names, fn);
   }
 
-  inspectAll(): Promise<Map<any>> {
-    return this._listExec(this.inspect);
+  restartAll(): Promise<Map<boolean>> {
+    return this._listExec(this.restart);
   }
 
   rm(names: string|string[], force?: boolean): Promise<boolean|Map<boolean>> {
@@ -147,6 +215,20 @@ export class DockerMachine {
     return this._listExec(name => _this.rm(name, force));
   }
 
+  ssh(names: string|string[], cmd: string): Promise<string|Map<string>> {
+    var fn = (name: string) => this._exec(['ssh', name, '"' + cmd + '"']);
+    return this._namesExec(names, fn);
+  }
+
+  scp(from: string, to: string, recursive: boolean): Promise<string> {
+    var command = ['scp'];
+    if (recursive) {
+      command.push('-r');
+    }
+    command = command.concat([from, to]);
+    return this._exec(command);
+  }
+
   start(names: string|string[]): Promise<boolean|Map<boolean>> {
     var fn = (name: string) => this._bexec(['start', name]);
     return this._namesExec(names, fn);
@@ -154,33 +236,6 @@ export class DockerMachine {
 
   startAll(): Promise<Map<boolean>> {
     return this._listExec(this.start);
-  }
-
-  stop(names: string|string[]): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => this._bexec(['stop', name]);
-    return this._namesExec(names, fn);
-  }
-
-  stopAll(): Promise<Map<boolean>> {
-    return this._listExec(this.stop);
-  }
-
-  restart(names: string|string[]): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => this._bexec(['restart', name]);
-    return this._namesExec(names, fn);
-  }
-
-  restartAll(): Promise<Map<boolean>> {
-    return this._listExec(this.restart);
-  }
-
-  kill(names: string|string[]): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => this._bexec(['kill', name]);
-    return this._namesExec(names, fn);
-  }
-
-  killAll(): Promise<Map<boolean>> {
-    return this._listExec(this.kill);
   }
 
   status(names: string|string[]): Promise<string|Map<string>> {
@@ -205,22 +260,13 @@ export class DockerMachine {
     return this._listExec(this.status);
   }
 
-  ip(names: string|string[]): Promise<string|Map<string>> {
-    var fn = (name: string) => this._exec(['ip', name]);
+  stop(names: string|string[]): Promise<boolean|Map<boolean>> {
+    var fn = (name: string) => this._bexec(['stop', name]);
     return this._namesExec(names, fn);
   }
 
-  ipAll(): Promise<Map<string>> {
-    return this._listExec(this.ip);
-  }
-
-  url(names: string|string[]): Promise<string|Map<string>> {
-    var fn = (name: string) => this._exec(['url', name]);
-    return this._namesExec(names, fn);
-  }
-
-  urlAll(): Promise<Map<string>> {
-    return this._listExec(this.url);
+  stopAll(): Promise<Map<boolean>> {
+    return this._listExec(this.stop);
   }
 
   upgrade(names: string|string[]): Promise<boolean|Map<boolean>> {
@@ -232,59 +278,13 @@ export class DockerMachine {
     return this._listExec(this.upgrade);
   }
 
-  regenerateCert(names: string|string[]): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => this._bexec(['regenerate-certs', '-f', name]);
+  url(names: string|string[]): Promise<string|Map<string>> {
+    var fn = (name: string) => this._exec(['url', name]);
     return this._namesExec(names, fn);
   }
 
-  regenerateAllCert(): Promise<Map<boolean>> {
-    return this._listExec(this.regenerateCert);
-  }
-
-  ssh(names: string|string[], cmd: string): Promise<string|Map<string>> {
-    var fn = (name: string) => this._exec(['ssh', name, '"' + cmd + '"']);
-    return this._namesExec(names, fn);
-  }
-
-  scp(from: string, to: string, recursive: boolean): Promise<string> {
-    var command = ['scp'];
-    if (recursive) {
-      command.push('-r');
-    }
-    command = command.concat([from, to]);
-    return this._exec(command);
-  }
-
-  active(): Promise<string> {
-    return this._exec(['active']);
-  }
-
-  config(names: string|string[]): Promise<string|Map<string>> {
-    var fn = (name: string) => this._exec(['config', name]);
-    return this._namesExec(names, fn);
-  }
-
-  env(names: string|string[], config?: EnvConfig): Promise<string|Map<string>> {
-    var fn = (name: string) => {
-      var command = ['env', name]
-      var fn = null;
-
-      if (config.swarm === true) {
-        command.push('--swarm')
-      }
-
-      if (config.shell) {
-        command = command.concat(['--shell', config.shell])
-      }
-
-      if (config.unset === true) {
-        command = command.concat(['--unset'])
-      }
-
-      return this._exec(command);
-    }
-
-    return this._namesExec(names, fn);
+  urlAll(): Promise<Map<string>> {
+    return this._listExec(this.url);
   }
 
   protected _driveOptions(driver: Driver): string[] {
