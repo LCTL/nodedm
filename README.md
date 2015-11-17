@@ -8,9 +8,17 @@ NodeDM communicate with docker-machine command, so you must install Docker Machi
 
 1. Install Docker Machine: https://docs.docker.com/machine/install-machine/
 
-2. `npm install nodedm`
+2. `npm install nodedm --save`
 
-### Support command:
+#### For TypeScript
+
+1. `npm install -g tsd`
+
+2. `npm install nodedm --save`
+
+3. `tsd link`
+
+### Supported command:
 
 - [x] active
 - [x] config
@@ -27,32 +35,68 @@ NodeDM communicate with docker-machine command, so you must install Docker Machi
 - [x] scp
 - [x] start
 - [x] status
+- [x] stop
 - [x] upgrade
 - [x] url
 
+### API
+
+```
+active(): Promise<string>`
+config(names: string | string[]): Promise<string | Map<string>>;
+create(names: string | string[], driver: Driver, swarm?: Swarm): Promise<boolean | Map<boolean>>;
+env(names: string | string[], config?: EnvConfig): Promise<string | Map<string>>;
+inspect(names: string | string[]): Promise<any | Map<any>>;
+inspectAll(): Promise<Map<any>>;
+ip(names: string | string[]): Promise<string | Map<string>>;
+ipAll(): Promise<Map<string>>;
+kill(names: string | string[]): Promise<boolean | Map<boolean>>;
+killAll(): Promise<Map<boolean>>;
+ls(nameOnly?: boolean): Promise<Machine[] | string[]>;
+regenerateCert(names: string | string[]): Promise<boolean | Map<boolean>>;
+regenerateAllCert(): Promise<Map<boolean>>;
+restart(names: string | string[]): Promise<boolean | Map<boolean>>;
+restartAll(): Promise<Map<boolean>>;
+rm(names: string | string[], force?: boolean): Promise<boolean | Map<boolean>>;
+rmAll(force?: boolean): Promise<Map<boolean>>;
+ssh(names: string | string[], cmd: string): Promise<string | Map<string>>;
+sshAll(cmd: string): Promise<Map<string>>;
+scp(from: string, to: string, recursive: boolean): Promise<string>;
+start(names: string | string[]): Promise<boolean | Map<boolean>>;
+startAll(): Promise<Map<boolean>>;
+status(names: string | string[]): Promise<string | Map<string>>;
+statusAll(): Promise<Map<string>>;
+stop(names: string | string[]): Promise<boolean | Map<boolean>>;
+stopAll(): Promise<Map<boolean>>;
+upgrade(names: string | string[]): Promise<boolean | Map<boolean>>;
+upgradeAll(): Promise<Map<boolean>>;
+url(names: string | string[]): Promise<string | Map<string>>;
+urlAll(): Promise<Map<string>>;
+```
+
 ### How to use
 
-ES6 Import
+##### ES6 Import / TypeScript
 ```
-import {dm, Driver, Swarm, Machine, MachineStatus} from 'nodedm'
+import { dm } from 'nodedm'
 ```
 
-CommandJS
+##### CommandJS
 ```
 var nodedm = require('nodedm')
 var dm = nodedm.dm
-var Driver = nodedm.Driver
-var Swarm = nodedm.Swarm
-var MachineStatus = nodedm.MachineStatus
 ```
 
-##### Example:
+#### Example:
 
-Create and ls
+##### Create and ls
 ```
-var vboxDriver = new Driver('virtualbox', {
-  'virtualbox-memory': '512'
-});
+var vboxDriver = {
+  name: 'virtualbox',
+  options: {
+    'virtualbox-memory': '512'
+  }
+};
 dm.create('vbox0', vboxDriver).then(function(){
   // Do something
 });
@@ -70,7 +114,7 @@ dm.create(['vbox1', 'vbox2', 'vbox3'], vboxDriver).then(function(){
 });
 ```
 
-Inspect
+##### Inspect
 ```
 dm.inspect('vbox0').then(function(result){
   console.log(result.Driver.MachineName); //vbox0
@@ -82,7 +126,7 @@ dm.inspect(['vbox0', 'vbox1']).then(function(map){
 });
 ```
 
-Stop
+##### Stop
 ```
 dm.stop('vbox0').then(function(){
   // Do something
@@ -93,14 +137,14 @@ dm.stop(['vbox1', 'vbox2']).then(function(){
 });
 ```
 
-Stop All
+##### Stop All
 ```
 dm.stopAll().then(function(){
   // Do something
 });
 ```
 
-Start
+##### Start
 ```
 dm.start('vbox0').then(function(){
   // Do something
@@ -111,14 +155,14 @@ dm.start(['vbox1', 'vbox2']).then(function(){
 });
 ```
 
-Start All
+##### Start All
 ```
 dm.startAll().then(function(){
   // Do something
 });
 ```
 
-Restart
+##### Restart
 ```
 dm.restart('vbox0').then(function(){
   // Do something
@@ -129,14 +173,14 @@ dm.restart(['vbox1', 'vbox2']).then(function(){
 });
 ```
 
-Restart All
+##### Restart All
 ```
 dm.restartAll().then(function(){
   // Do something
 });
 ```
 
-Kill
+##### Kill
 ```
 dm.kill('vbox0').then(function(){
   // Do something
@@ -147,14 +191,14 @@ dm.kill(['vbox1', 'vbox2']).then(function(){
 });
 ```
 
-Kill All
+##### Kill All
 ```
 dm.killAll().then(function(){
   // Do something
 });
 ```
 
-Status
+##### Status
 ```
 dm.status('vbox0').then(function(status){
   console.log(status === MachineStatus.RUNNING) // true
@@ -166,7 +210,7 @@ dm.status(['vbox0', 'vbox1']).then(function(map){
 });
 ```
 
-All Status
+##### All Status
 ```
 dm.statusAll().then(function(map){
   console.log(map['vbox0'] === MachineStatus.RUNNING); //true
@@ -176,7 +220,7 @@ dm.statusAll().then(function(map){
 });
 ```
 
-IP
+##### IP
 ```
 dm.ip('vbox0').then(function(ip){
   console.log(ip)
@@ -188,7 +232,7 @@ dm.ip(['vbox0', 'vbox1']).then(function(map){
 });
 ```
 
-All IP
+##### All IP
 ```
 dm.ipAll().then(function(map){
   console.log(map['vbox0']); //192.168.1.1
@@ -198,7 +242,7 @@ dm.ipAll().then(function(map){
 });
 ```
 
-SSH
+##### SSH
 ```
 dm.ssh('vbox0', 'pwd').then(function(result){
   console.log(result); // /home/docker
@@ -210,7 +254,7 @@ dm.ip(['vbox0', 'vbox1'], 'pwd').then(function(map){
 });
 ```
 
-SCP (Not support multiple machine)
+##### SCP (Not support multiple machine)
 ```
 // dm.ssh(from, to, recursive);
 dm.ssh('vbox0:/home/docker', '.', true).then(function(result){
