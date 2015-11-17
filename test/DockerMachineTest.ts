@@ -86,6 +86,19 @@ describe('DockerMachine', () => {
 
   });
 
+  describe('#sshAll', () => {
+
+    it('should return all `pwd` result',
+      (done) => expect(dm.sshAll('pwd'))
+        .to.eventually.deep.equal({
+          vbox0: '/home/docker',
+          vbox1: '/home/docker',
+          vbox2: '/home/docker',
+          vbox3: '/home/docker'
+        }).notify(done));
+
+  });
+
   describe('#upgrade', () => {
 
     it('should upgrade vbox0',

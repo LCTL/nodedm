@@ -58,6 +58,7 @@ export declare class DockerMachine {
     rm(names: string | string[], force?: boolean): Promise<boolean | Map<boolean>>;
     rmAll(force?: boolean): Promise<Map<boolean>>;
     ssh(names: string | string[], cmd: string): Promise<string | Map<string>>;
+    sshAll(cmd: string): Promise<Map<string>>;
     scp(from: string, to: string, recursive: boolean): Promise<string>;
     start(names: string | string[]): Promise<boolean | Map<boolean>>;
     startAll(): Promise<Map<boolean>>;

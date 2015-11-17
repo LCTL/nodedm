@@ -150,6 +150,10 @@ var DockerMachine = (function () {
         var fn = function (name) { return _this._exec(['ssh', name, '"' + cmd + '"']); };
         return this._namesExec(names, fn);
     };
+    DockerMachine.prototype.sshAll = function (cmd) {
+        var _this = this;
+        return this._listExec(function (name) { return _this.ssh(name, cmd); });
+    };
     DockerMachine.prototype.scp = function (from, to, recursive) {
         var command = ['scp'];
         if (recursive) {

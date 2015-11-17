@@ -51,6 +51,15 @@ describe('DockerMachine', function () {
         it('should return vbox0 `pwd` result', function (done) { return chai_1.expect(index_1.dm.ssh('vbox0', 'pwd'))
             .to.eventually.equal('/home/docker').notify(done); });
     });
+    describe('#sshAll', function () {
+        it('should return all `pwd` result', function (done) { return chai_1.expect(index_1.dm.sshAll('pwd'))
+            .to.eventually.deep.equal({
+            vbox0: '/home/docker',
+            vbox1: '/home/docker',
+            vbox2: '/home/docker',
+            vbox3: '/home/docker'
+        }).notify(done); });
+    });
     describe('#upgrade', function () {
         it('should upgrade vbox0', function (done) { return chai_1.expect(index_1.dm.upgrade('vbox0')).to.eventually.equal(true).notify(done); });
     });

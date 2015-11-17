@@ -220,6 +220,11 @@ export class DockerMachine {
     return this._namesExec(names, fn);
   }
 
+  sshAll(cmd: string) : Promise<Map<string>> {
+    var _this = this;
+    return this._listExec(name => _this.ssh(name, cmd));
+  }
+
   scp(from: string, to: string, recursive: boolean): Promise<string> {
     var command = ['scp'];
     if (recursive) {
