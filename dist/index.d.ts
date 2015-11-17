@@ -73,7 +73,7 @@ export declare class DockerMachine {
     protected _swarmOptions(swarm: Swarm): string[];
     protected _pushSwarmOption(options: string[], name: string, value: string): void;
     protected _namesExec<R>(names: string | string[], fn: (name: string) => Promise<R>): Promise<R | Map<R>>;
-    protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<Map<R>>;
+    protected _listExec<R>(fn: (name: string) => Promise<R>): Promise<Map<R>>;
     protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<Map<R>>;
     protected _bexec(command: string[]): Promise<boolean>;
     protected _exec(command: string[]): Promise<string>;

@@ -332,7 +332,7 @@ export class DockerMachine {
     return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);
   }
 
-  protected _listExec<R>(fn: (nameLstring) => Promise<R>): Promise<Map<R>> {
+  protected _listExec<R>(fn: (name: string) => Promise<R>): Promise<Map<R>> {
     var _this = this;
     return _this.ls().then((machines: Machine[]) => {
       var names: string[] = machines.map((machine: Machine) => machine.name);
