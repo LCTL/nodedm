@@ -275,7 +275,7 @@ var DockerMachine = (function () {
         return new es6_promise_1.Promise(function (resolve, reject) {
             child_process.exec(fullCommand.join(' '), function (error, stdout, stderr) {
                 if (error) {
-                    reject(stderr.toString().trim());
+                    reject(new Error(stderr.toString().trim()));
                 }
                 else {
                     resolve(stdout.toString().trim());
