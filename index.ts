@@ -131,13 +131,20 @@ export class DockerMachine {
     return this._listExec(this.inspect);
   }
 
-  remove(names: string|string[]): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => this._bexec(['rm', name]);
+  remove(names: string|string[], force?: boolean): Promise<boolean|Map<boolean>> {
+    var fn = (name: string) => {
+      var command = ['rm', name];
+      if (force) {
+        command.push('-f');
+      }
+      return this._bexec(command);
+    };
     return this._namesExec(names, fn);
   }
 
-  removeAll(): Promise<Map<boolean>> {
-    return this._listExec(this.remove);
+  removeAll(force?: boolean): Promise<Map<boolean>> {
+    var _this = this;
+    return this._listExec(name => _this.remove(name, force));
   }
 
   start(names: string|string[]): Promise<boolean|Map<boolean>> {

@@ -72,13 +72,20 @@ var DockerMachine = (function () {
     DockerMachine.prototype.inspectAll = function () {
         return this._listExec(this.inspect);
     };
-    DockerMachine.prototype.remove = function (names) {
+    DockerMachine.prototype.remove = function (names, force) {
         var _this = this;
-        var fn = function (name) { return _this._bexec(['rm', name]); };
+        var fn = function (name) {
+            var command = ['rm', name];
+            if (force) {
+                command.push('-f');
+            }
+            return _this._bexec(command);
+        };
         return this._namesExec(names, fn);
     };
-    DockerMachine.prototype.removeAll = function () {
-        return this._listExec(this.remove);
+    DockerMachine.prototype.removeAll = function (force) {
+        var _this = this;
+        return this._listExec(function (name) { return _this.remove(name, force); });
     };
     DockerMachine.prototype.start = function (names) {
         var _this = this;
