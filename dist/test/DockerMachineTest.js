@@ -66,7 +66,7 @@ describe('DockerMachine', function () {
             .to.eventually.equal(true).notify(done); });
     });
     describe('#remove', function () {
-        it('should remove vbox3', function (done) { return chai_1.expect(index_1.dm.remove('vbox3'))
+        it('should remove vbox3', function (done) { return chai_1.expect(index_1.dm.rm('vbox3'))
             .to.eventually.equal(true).notify(done); });
     });
     describe('#start', function () {
@@ -99,7 +99,7 @@ describe('DockerMachine', function () {
         }).notify(done); });
     });
     describe('#remove', function () {
-        it('should remove vbox0, vbox1, vbox2', function (done) { return chai_1.expect(index_1.dm.remove(['vbox0', 'vbox1', 'vbox2']))
+        it('should remove vbox0, vbox1, vbox2', function (done) { return chai_1.expect(index_1.dm.rm(['vbox0', 'vbox1', 'vbox2']))
             .to.eventually.deep.equal({
             vbox0: true,
             vbox1: true,
@@ -145,7 +145,7 @@ describe('DockerMachine', function () {
         }).notify(done); });
     });
     describe('#removeAll', function () {
-        it('should remove all vbox', function (done) { return chai_1.expect(index_1.dm.removeAll())
+        it('should remove all vbox', function (done) { return chai_1.expect(index_1.dm.rmAll())
             .to.eventually.deep.equal({
             vbox0: true,
             vbox1: true,

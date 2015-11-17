@@ -119,7 +119,7 @@ describe('DockerMachine', () => {
   describe('#remove', () => {
 
     it('should remove vbox3',
-      (done) => expect(dm.remove('vbox3'))
+      (done) => expect(dm.rm('vbox3'))
         .to.eventually.equal(true).notify(done));
 
   });
@@ -176,7 +176,7 @@ describe('DockerMachine', () => {
   describe('#remove', () => {
 
     it('should remove vbox0, vbox1, vbox2',
-      (done) => expect(dm.remove(['vbox0', 'vbox1', 'vbox2']))
+      (done) => expect(dm.rm(['vbox0', 'vbox1', 'vbox2']))
         .to.eventually.deep.equal({
           vbox0: true,
           vbox1: true,
@@ -239,7 +239,7 @@ describe('DockerMachine', () => {
   describe('#removeAll', () => {
 
     it('should remove all vbox',
-      (done) => expect(dm.removeAll())
+      (done) => expect(dm.rmAll())
         .to.eventually.deep.equal({
           vbox0: true,
           vbox1: true,

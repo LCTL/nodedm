@@ -44,8 +44,8 @@ export declare class DockerMachine {
     create(names: string | string[], driver: Driver, swarm?: Swarm): Promise<boolean | Map<boolean>>;
     inspect(names: string | string[]): Promise<any | Map<any>>;
     inspectAll(): Promise<Map<any>>;
-    remove(names: string | string[], force?: boolean): Promise<boolean | Map<boolean>>;
-    removeAll(force?: boolean): Promise<Map<boolean>>;
+    rm(names: string | string[], force?: boolean): Promise<boolean | Map<boolean>>;
+    rmAll(force?: boolean): Promise<Map<boolean>>;
     start(names: string | string[]): Promise<boolean | Map<boolean>>;
     startAll(): Promise<Map<boolean>>;
     stop(names: string | string[]): Promise<boolean | Map<boolean>>;

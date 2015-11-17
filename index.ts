@@ -131,7 +131,7 @@ export class DockerMachine {
     return this._listExec(this.inspect);
   }
 
-  remove(names: string|string[], force?: boolean): Promise<boolean|Map<boolean>> {
+  rm(names: string|string[], force?: boolean): Promise<boolean|Map<boolean>> {
     var fn = (name: string) => {
       var command = ['rm', name];
       if (force) {
@@ -142,9 +142,9 @@ export class DockerMachine {
     return this._namesExec(names, fn);
   }
 
-  removeAll(force?: boolean): Promise<Map<boolean>> {
+  rmAll(force?: boolean): Promise<Map<boolean>> {
     var _this = this;
-    return this._listExec(name => _this.remove(name, force));
+    return this._listExec(name => _this.rm(name, force));
   }
 
   start(names: string|string[]): Promise<boolean|Map<boolean>> {
