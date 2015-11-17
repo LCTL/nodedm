@@ -90,27 +90,38 @@ var DockerMachine = (function () {
     DockerMachine.prototype.killAll = function () {
         return this._listExec(this.kill);
     };
-    DockerMachine.prototype.ls = function () {
-        var _this = this;
-        return new es6_promise_1.Promise(function (resolve, reject) {
-            _this._exec(['ls']).then(function (out) {
-                var lines = out.split('\n'), nameIndex = lines[0].indexOf('NAME'), activeIndex = lines[0].indexOf('ACTIVE'), driverIndex = lines[0].indexOf('DRIVER'), stateIndex = lines[0].indexOf('STATE'), urlIndex = lines[0].indexOf('URL'), swarmIndex = lines[0].indexOf('SWARM'), machines = [];
-                for (var i = 1; i < lines.length; i++) {
-                    var line = lines[i];
-                    if (line === null || line === '') {
-                        break;
+    DockerMachine.prototype.ls = function (nameOnly) {
+        var command = ['ls'];
+        if (nameOnly) {
+            command.push('-q');
+        }
+        return this._exec(command).then(function (result) {
+            var lines = result.trim().split('\n'), nameIndex = lines[0].indexOf('NAME'), activeIndex = lines[0].indexOf('ACTIVE'), driverIndex = lines[0].indexOf('DRIVER'), stateIndex = lines[0].indexOf('STATE'), urlIndex = lines[0].indexOf('URL'), swarmIndex = lines[0].indexOf('SWARM');
+            if (nameIndex === -1
+                || activeIndex === -1
+                || driverIndex === -1
+                || driverIndex === -1
+                || stateIndex === -1
+                || urlIndex === -1
+                || swarmIndex === -1) {
+                return lines.map(function (line) { return line.trim(); });
+            }
+            else {
+                var machines = [];
+                lines.forEach(function (line, index) {
+                    if (index > 0 && line !== null && line !== '') {
+                        machines.push({
+                            name: line.substring(nameIndex, activeIndex - 1).trim(),
+                            active: line.substring(activeIndex, driverIndex - 1).trim() === '*',
+                            driver: line.substring(activeIndex, stateIndex - 1).trim(),
+                            state: MachineStatus.valueOf(line.substring(stateIndex, urlIndex - 1).trim()),
+                            url: line.substring(urlIndex, swarmIndex - 1).trim(),
+                            swarm: line.substring(swarmIndex).trim()
+                        });
                     }
-                    machines.push({
-                        name: line.substring(nameIndex, activeIndex - 1).trim(),
-                        active: line.substring(activeIndex, driverIndex - 1).trim() === '*',
-                        driver: line.substring(activeIndex, stateIndex - 1).trim(),
-                        state: MachineStatus.valueOf(line.substring(stateIndex, urlIndex - 1).trim()),
-                        url: line.substring(urlIndex, swarmIndex - 1).trim(),
-                        swarm: line.substring(swarmIndex).trim()
-                    });
-                }
-                resolve(machines);
-            }).catch(function (out) { return reject(out); });
+                });
+                return machines;
+            }
         });
     };
     ;
@@ -254,10 +265,7 @@ var DockerMachine = (function () {
     };
     DockerMachine.prototype._listExec = function (fn) {
         var _this = this;
-        return _this.ls().then(function (machines) {
-            var names = machines.map(function (machine) { return machine.name; });
-            return _this._batchExec(names, fn);
-        });
+        return _this.ls(true).then(function (names) { return _this._batchExec(names, fn); });
     };
     DockerMachine.prototype._batchExec = function (names, fn) {
         var _this = this;

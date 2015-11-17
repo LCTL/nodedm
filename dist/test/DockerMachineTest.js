@@ -26,6 +26,10 @@ describe('DockerMachine', function () {
     describe('#ls', function () {
         it('should return list of machine', function (done) { return chai_1.expect(index_1.dm.ls())
             .to.eventually.deep.property('[0].name', 'vbox0').notify(done); });
+        it('should return list of machine', function (done) { return chai_1.expect(index_1.dm.ls())
+            .to.eventually.deep.property('[0].driver', 'virtualbox').notify(done); });
+        it('should return list of machine name only', function (done) { return chai_1.expect(index_1.dm.ls(true))
+            .to.eventually.deep.equal(['vbox0', 'vbox1', 'vbox2', 'vbox3']).notify(done); });
     });
     describe('#inspect', function () {
         it('should return vbox0 inspect object', function (done) { return chai_1.expect(index_1.dm.inspect('vbox0'))

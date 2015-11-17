@@ -36,6 +36,14 @@ describe('DockerMachine', () => {
       (done) => expect(dm.ls())
         .to.eventually.deep.property('[0].name', 'vbox0').notify(done));
 
+    it('should return list of machine',
+      (done) => expect(dm.ls())
+        .to.eventually.deep.property('[0].driver', 'virtualbox').notify(done));
+
+    it('should return list of machine name only',
+      (done) => expect(dm.ls(true))
+        .to.eventually.deep.equal(['vbox0', 'vbox1', 'vbox2', 'vbox3']).notify(done));
+
   });
 
   describe('#inspect', () => {

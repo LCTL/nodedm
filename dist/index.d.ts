@@ -50,7 +50,7 @@ export declare class DockerMachine {
     ipAll(): Promise<Map<string>>;
     kill(names: string | string[]): Promise<boolean | Map<boolean>>;
     killAll(): Promise<Map<boolean>>;
-    ls(): Promise<Machine[]>;
+    ls(nameOnly?: boolean): Promise<Machine[] | string[]>;
     regenerateCert(names: string | string[]): Promise<boolean | Map<boolean>>;
     regenerateAllCert(): Promise<Map<boolean>>;
     restart(names: string | string[]): Promise<boolean | Map<boolean>>;

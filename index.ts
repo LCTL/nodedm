@@ -137,47 +137,45 @@ export class DockerMachine {
     return this._listExec(this.kill);
   }
 
-  ls(): Promise<Machine[]> {
+  ls(nameOnly?: boolean): Promise<Machine[]|string[]> {
+    var command = ['ls']
+    if (nameOnly) {
+      command.push('-q');
+    }
+    return this._exec(command).then(result => {
+      var
+        lines: string[] = result.trim().split('\n'),
+        nameIndex: number = lines[0].indexOf('NAME'),
+        activeIndex: number = lines[0].indexOf('ACTIVE'),
+        driverIndex: number = lines[0].indexOf('DRIVER'),
+        stateIndex: number = lines[0].indexOf('STATE'),
+        urlIndex: number = lines[0].indexOf('URL'),
+        swarmIndex: number = lines[0].indexOf('SWARM');
 
-    var _this = this;
-
-    return new Promise<Machine[]>(function(resolve, reject) {
-
-      _this._exec(['ls']).then(function(out: string) {
-
-        var
-          lines: string[] = out.split('\n'),
-          nameIndex: number = lines[0].indexOf('NAME'),
-          activeIndex: number = lines[0].indexOf('ACTIVE'),
-          driverIndex: number = lines[0].indexOf('DRIVER'),
-          stateIndex: number = lines[0].indexOf('STATE'),
-          urlIndex: number = lines[0].indexOf('URL'),
-          swarmIndex: number = lines[0].indexOf('SWARM'),
-          machines: Machine[] = [];
-
-        for (let i = 1; i < lines.length; i++) {
-
-          let line: string = lines[i];
-
-          if (line === null || line === '') {
-            break;
+      if (nameIndex === -1
+        || activeIndex === -1
+        || driverIndex === -1
+        || driverIndex === -1
+        || stateIndex === -1
+        || urlIndex === -1
+        || swarmIndex === -1) {
+        return lines.map(line => line.trim());
+      } else {
+        let machines: Machine[] = [];
+        lines.forEach((line, index) => {
+          if (index > 0 && line !== null && line !== '') {
+            machines.push({
+              name: line.substring(nameIndex, activeIndex - 1).trim(),
+              active: line.substring(activeIndex, driverIndex - 1).trim() === '*',
+              driver: line.substring(activeIndex, stateIndex - 1).trim(),
+              state: MachineStatus.valueOf(line.substring(stateIndex, urlIndex - 1).trim()),
+              url: line.substring(urlIndex, swarmIndex - 1).trim(),
+              swarm: line.substring(swarmIndex).trim()
+            });
           }
-
-          machines.push({
-            name: line.substring(nameIndex, activeIndex - 1).trim(),
-            active: line.substring(activeIndex, driverIndex - 1).trim() === '*',
-            driver: line.substring(activeIndex, stateIndex - 1).trim(),
-            state: MachineStatus.valueOf(line.substring(stateIndex, urlIndex - 1).trim()),
-            url: line.substring(urlIndex, swarmIndex - 1).trim(),
-            swarm: line.substring(swarmIndex).trim()
-          })
-
-        }
-
-        resolve(machines);
-
-      }).catch((out: string) => reject(out));
-
+        });
+        return machines;
+      }
     });
   };
 
@@ -220,7 +218,7 @@ export class DockerMachine {
     return this._namesExec(names, fn);
   }
 
-  sshAll(cmd: string) : Promise<Map<string>> {
+  sshAll(cmd: string): Promise<Map<string>> {
     var _this = this;
     return this._listExec(name => _this.ssh(name, cmd));
   }
@@ -339,10 +337,7 @@ export class DockerMachine {
 
   protected _listExec<R>(fn: (name: string) => Promise<R>): Promise<Map<R>> {
     var _this = this;
-    return _this.ls().then((machines: Machine[]) => {
-      var names: string[] = machines.map((machine: Machine) => machine.name);
-      return _this._batchExec(names, fn);
-    })
+    return _this.ls(true).then((names: string[]) => _this._batchExec(names, fn));
   }
 
   protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<Map<R>> {
