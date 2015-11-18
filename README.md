@@ -42,7 +42,7 @@ NodeDM communicate with docker-machine command, so you must install Docker Machi
 ### API
 
 ```
-active(): Promise<string>`
+active(): Promise<string>;
 config(names: string | string[]): Promise<string | Map<string>>;
 create(names: string | string[], driver: Driver, swarm?: Swarm): Promise<boolean | Map<boolean>>;
 env(names: string | string[], config?: EnvConfig): Promise<string | Map<string>>;
