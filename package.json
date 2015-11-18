@@ -1,7 +1,7 @@
 {
   "name": "nodedm",
   "version": "0.0.3",
-  "description": "Integrate docker machine and NodeJS",
+  "description": "Docker Machine wrapper for NodeJS",
   "main": "dist/index.js",
   "typescript": {
     "definition": "./dist/index.d.ts"
