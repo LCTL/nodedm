@@ -1,6 +1,6 @@
 {
   "name": "nodedm",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Docker Machine wrapper for NodeJS",
   "main": "dist/index.js",
   "typescript": {
