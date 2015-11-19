@@ -265,7 +265,7 @@ var DockerMachine = (function () {
     };
     DockerMachine.prototype._listExec = function (fn) {
         var _this = this;
-        return _this.ls(true).then(function (names) { return _this._batchExec(names, fn); });
+        return this.ls(true).then(function (names) { return _this._batchExec(names, fn); });
     };
     DockerMachine.prototype._batchExec = function (names, fn) {
         var _this = this;

@@ -209,8 +209,7 @@ export class DockerMachine {
   }
 
   rmAll(force?: boolean): Promise<Map<boolean>> {
-    var _this = this;
-    return this._listExec(name => _this.rm(name, force));
+    return this._listExec(name => this.rm(name, force));
   }
 
   ssh(names: string|string[], cmd: string): Promise<string|Map<string>> {
@@ -219,8 +218,7 @@ export class DockerMachine {
   }
 
   sshAll(cmd: string): Promise<Map<string>> {
-    var _this = this;
-    return this._listExec(name => _this.ssh(name, cmd));
+    return this._listExec(name => this.ssh(name, cmd));
   }
 
   scp(from: string, to: string, recursive: boolean): Promise<string> {
@@ -242,10 +240,9 @@ export class DockerMachine {
   }
 
   status(names: string|string[]): Promise<string|Map<string>> {
-    var _this = this;
     var fn = (name: string) => {
       return new Promise<string>((resolve, reject) => {
-        _this._exec(['status', name]).then((out: string) => {
+        this._exec(['status', name]).then((out: string) => {
           resolve(MachineStatus.valueOf(out))
         }).catch((out: string) => {
           if (/not exist/ig.test(out)) {
@@ -336,15 +333,13 @@ export class DockerMachine {
   }
 
   protected _listExec<R>(fn: (name: string) => Promise<R>): Promise<Map<R>> {
-    var _this = this;
-    return _this.ls(true).then((names: string[]) => _this._batchExec(names, fn));
+    return this.ls(true).then((names: string[]) => this._batchExec(names, fn));
   }
 
   protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<Map<R>> {
-    var _this = this;
     var promises: Promise<Entry<R>>[] = [];
     names.forEach((name) => {
-      var pramise = fn.apply(_this, [name]).then((result: R) => {
+      var pramise = fn.apply(this, [name]).then((result: R) => {
         return {
           name: name,
           value: result

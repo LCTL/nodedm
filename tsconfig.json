@@ -16,5 +16,8 @@
     "./index.ts",
     "./test/DockerMachineTest.ts",
     "./typings/tsd.d.ts"
-  ]
+  ],
+  "atom": {
+    "rewriteTsconfig": true
+  }
 }
