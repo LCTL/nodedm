@@ -12,5 +12,6 @@ install:
   - sudo apt-get install -y openssh-client
   - sudo apt-get install -y openssh-server
   - npm run setup
+  - sudo /Library/StartupItems/VirtualBox/VirtualBox restart
 script:
   - sudo $(which node) node_modules/mocha/bin/mocha --timeout 1800000 dist/test/*.js
