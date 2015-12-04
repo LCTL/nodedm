@@ -104,10 +104,9 @@ describe('DockerMachine', function () {
         }).notify(done); });
     });
     describe('#kill', function () {
-        it('should kill vbox0, vbox1, vbox2', function (done) { return chai_1.expect(index_1.dm.kill(['vbox0', 'vbox1', 'vbox2']))
+        it('should kill vbox0, vbox2', function (done) { return chai_1.expect(index_1.dm.kill(['vbox0', 'vbox2']))
             .to.eventually.deep.equal({
             vbox0: true,
-            vbox1: true,
             vbox2: true
         }).notify(done); });
     });
