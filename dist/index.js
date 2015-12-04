@@ -113,7 +113,7 @@ var DockerMachine = (function () {
                         machines.push({
                             name: line.substring(nameIndex, activeIndex - 1).trim(),
                             active: line.substring(activeIndex, driverIndex - 1).trim() === '*',
-                            driver: line.substring(activeIndex, stateIndex - 1).trim(),
+                            driver: line.substring(driverIndex, stateIndex - 1).trim(),
                             state: MachineStatus.valueOf(line.substring(stateIndex, urlIndex - 1).trim()),
                             url: line.substring(urlIndex, swarmIndex - 1).trim(),
                             swarm: line.substring(swarmIndex).trim()
