@@ -7,9 +7,10 @@
     "definition": "./dist/index.d.ts"
   },
   "scripts": {
-    "setup": "npm install && node node_modules/tsd/build/cli.js install && node node_modules/typescript/bin/tsc",
-    "gendef": "node ./node_modules/dts-generator/bin/dts-generator --name nodedm --project . --exclude **/*.d.ts --exclude **/test/* --out ./dist/index.d.ts",
-    "test": "node node_modules/mocha/bin/mocha --timeout 1800000 dist/test/*.js"
+    "setup": "npm install && tsd install && tsc",
+    "build": "tsc && npm run gendef",
+    "gendef": "dts-generator --name nodedm --project . --exclude **/*.d.ts --exclude **/test/* --out ./dist/index.d.ts",
+    "test": "mocha --timeout 1800000 dist/test/*.js"
   },
   "repository": {
     "type": "git",
