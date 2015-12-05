@@ -29,73 +29,43 @@ exports.MachineStatus = MachineStatus;
 var DockerMachine = (function () {
     function DockerMachine() {
     }
-    DockerMachine.prototype.active = function () {
-        return this._exec(['active']);
+    DockerMachine.prototype.active = function (options) {
+        return this._exec(this._createCmdWithOptions(['action'], options));
     };
-    DockerMachine.prototype.config = function (names) {
+    DockerMachine.prototype.config = function (names, options) {
+        return this._namesStringResult(names, 'config', options);
+    };
+    DockerMachine.prototype.create = function (names, options) {
+        return this._namesBooleanResult(names, 'create', options);
+    };
+    DockerMachine.prototype.env = function (names, options) {
+        return this._namesStringResult(names, 'env', options);
+    };
+    DockerMachine.prototype.inspect = function (names, options) {
         var _this = this;
-        var fn = function (name) { return _this._exec(['config', name]); };
+        var fn = function (name) { return _this._exec(_this._createCmdWithOptions(['inspect', name], options)).then(function (out) { return JSON.parse(out); }); };
         return this._namesExec(names, fn);
     };
-    DockerMachine.prototype.create = function (names, driver, swarm) {
+    DockerMachine.prototype.inspectAll = function (options) {
         var _this = this;
-        var fn = function (name) {
-            var options = ['create', name].concat(_this._driveOptions(driver));
-            if (swarm) {
-                options = options.concat(_this._swarmOptions(swarm));
-            }
-            return _this._bexec(options);
-        };
-        return this._namesExec(names, fn);
+        return this._listExec(function (name) { return _this.inspect(name, options); });
     };
-    DockerMachine.prototype.env = function (names, config) {
+    DockerMachine.prototype.ip = function (names, options) {
+        return this._namesStringResult(names, 'ip', options);
+    };
+    DockerMachine.prototype.ipAll = function (options) {
         var _this = this;
-        var fn = function (name) {
-            var command = ['env', name];
-            var fn = null;
-            if (config.swarm === true) {
-                command.push('--swarm');
-            }
-            if (config.shell) {
-                command = command.concat(['--shell', config.shell]);
-            }
-            if (config.unset === true) {
-                command = command.concat(['--unset']);
-            }
-            return _this._exec(command);
-        };
-        return this._namesExec(names, fn);
+        return this._listExec(function (name) { return _this.ip(name, options); });
     };
-    DockerMachine.prototype.inspect = function (names) {
+    DockerMachine.prototype.kill = function (names, options) {
+        return this._namesBooleanResult(names, 'kill', options);
+    };
+    DockerMachine.prototype.killAll = function (options) {
         var _this = this;
-        var fn = function (name) { return _this._exec(['inspect', name]).then(function (out) { return JSON.parse(out); }); };
-        return this._namesExec(names, fn);
+        return this._listExec(function (name) { return _this.kill(name, options); });
     };
-    DockerMachine.prototype.inspectAll = function () {
-        return this._listExec(this.inspect);
-    };
-    DockerMachine.prototype.ip = function (names) {
-        var _this = this;
-        var fn = function (name) { return _this._exec(['ip', name]); };
-        return this._namesExec(names, fn);
-    };
-    DockerMachine.prototype.ipAll = function () {
-        return this._listExec(this.ip);
-    };
-    DockerMachine.prototype.kill = function (names) {
-        var _this = this;
-        var fn = function (name) { return _this._bexec(['kill', name]); };
-        return this._namesExec(names, fn);
-    };
-    DockerMachine.prototype.killAll = function () {
-        return this._listExec(this.kill);
-    };
-    DockerMachine.prototype.ls = function (nameOnly) {
-        var command = ['ls'];
-        if (nameOnly) {
-            command.push('-q');
-        }
-        return this._exec(command).then(function (result) {
+    DockerMachine.prototype.ls = function (options) {
+        return this._exec(this._createCmdWithOptions(['ls'], options)).then(function (result) {
             var lines = result.trim().split('\n'), nameIndex = lines[0].indexOf('NAME'), activeIndex = lines[0].indexOf('ACTIVE'), driverIndex = lines[0].indexOf('DRIVER'), stateIndex = lines[0].indexOf('STATE'), urlIndex = lines[0].indexOf('URL'), swarmIndex = lines[0].indexOf('SWARM');
             if (nameIndex === -1
                 || activeIndex === -1
@@ -125,67 +95,52 @@ var DockerMachine = (function () {
         });
     };
     ;
-    DockerMachine.prototype.regenerateCert = function (names) {
+    DockerMachine.prototype.regenerateCert = function (names, options) {
+        return this._namesBooleanResult(names, 'regenerate-certs -f', options);
+    };
+    DockerMachine.prototype.regenerateAllCert = function (options) {
         var _this = this;
-        var fn = function (name) { return _this._bexec(['regenerate-certs', '-f', name]); };
+        return this._listExec(function (name) { return _this.regenerateCert(name, options); });
+    };
+    DockerMachine.prototype.restart = function (names, options) {
+        return this._namesBooleanResult(names, 'restart', options);
+    };
+    DockerMachine.prototype.restartAll = function (options) {
+        var _this = this;
+        return this._listExec(function (name) { return _this.restart(name, options); });
+    };
+    DockerMachine.prototype.rm = function (names, options) {
+        return this._namesBooleanResult(names, 'rm', options);
+    };
+    DockerMachine.prototype.rmAll = function (options) {
+        var _this = this;
+        return this._listExec(function (name) { return _this.rm(name, options); });
+    };
+    DockerMachine.prototype.ssh = function (names, cmd, options) {
+        var _this = this;
+        var fn = function (name) { return _this._exec(_this._createCmdWithOptions(['ssh', name, '"' + cmd + '"'], options)); };
         return this._namesExec(names, fn);
     };
-    DockerMachine.prototype.regenerateAllCert = function () {
-        return this._listExec(this.regenerateCert);
-    };
-    DockerMachine.prototype.restart = function (names) {
+    DockerMachine.prototype.sshAll = function (cmd, options) {
         var _this = this;
-        var fn = function (name) { return _this._bexec(['restart', name]); };
-        return this._namesExec(names, fn);
+        return this._listExec(function (name) { return _this.ssh(name, cmd, options); });
     };
-    DockerMachine.prototype.restartAll = function () {
-        return this._listExec(this.restart);
-    };
-    DockerMachine.prototype.rm = function (names, force) {
-        var _this = this;
-        var fn = function (name) {
-            var command = ['rm', name];
-            if (force) {
-                command.push('-f');
-            }
-            return _this._bexec(command);
-        };
-        return this._namesExec(names, fn);
-    };
-    DockerMachine.prototype.rmAll = function (force) {
-        var _this = this;
-        return this._listExec(function (name) { return _this.rm(name, force); });
-    };
-    DockerMachine.prototype.ssh = function (names, cmd) {
-        var _this = this;
-        var fn = function (name) { return _this._exec(['ssh', name, '"' + cmd + '"']); };
-        return this._namesExec(names, fn);
-    };
-    DockerMachine.prototype.sshAll = function (cmd) {
-        var _this = this;
-        return this._listExec(function (name) { return _this.ssh(name, cmd); });
-    };
-    DockerMachine.prototype.scp = function (from, to, recursive) {
-        var command = ['scp'];
-        if (recursive) {
-            command.push('-r');
-        }
-        command = command.concat([from, to]);
+    DockerMachine.prototype.scp = function (from, to, options) {
+        var command = this._createCmdWithOptions(['scp'], options);
         return this._exec(command);
     };
-    DockerMachine.prototype.start = function (names) {
+    DockerMachine.prototype.start = function (names, options) {
+        return this._namesBooleanResult(names, 'start', options);
+    };
+    DockerMachine.prototype.startAll = function (options) {
         var _this = this;
-        var fn = function (name) { return _this._bexec(['start', name]); };
-        return this._namesExec(names, fn);
+        return this._listExec(function (name) { return _this.start(name, options); });
     };
-    DockerMachine.prototype.startAll = function () {
-        return this._listExec(this.start);
-    };
-    DockerMachine.prototype.status = function (names) {
+    DockerMachine.prototype.status = function (names, options) {
         var _this = this;
         var fn = function (name) {
             return new es6_promise_1.Promise(function (resolve, reject) {
-                _this._exec(['status', name]).then(function (out) {
+                _this._exec(_this._createCmdWithOptions(['status', name], options)).then(function (out) {
                     resolve(MachineStatus.valueOf(out));
                 }).catch(function (out) {
                     if (/not exist/ig.test(out)) {
@@ -200,72 +155,70 @@ var DockerMachine = (function () {
         return this._namesExec(names, fn);
     };
     ;
-    DockerMachine.prototype.statusAll = function () {
-        return this._listExec(this.status);
-    };
-    DockerMachine.prototype.stop = function (names) {
+    DockerMachine.prototype.statusAll = function (options) {
         var _this = this;
-        var fn = function (name) { return _this._bexec(['stop', name]); };
+        return this._listExec(function (name) { return _this.status(name, options); });
+    };
+    DockerMachine.prototype.stop = function (names, options) {
+        return this._namesBooleanResult(names, 'stop', options);
+    };
+    DockerMachine.prototype.stopAll = function (options) {
+        var _this = this;
+        return this._listExec(function (name) { return _this.stop(name, options); });
+    };
+    DockerMachine.prototype.upgrade = function (names, options) {
+        return this._namesBooleanResult(names, 'upgrade', options);
+    };
+    DockerMachine.prototype.upgradeAll = function (options) {
+        var _this = this;
+        return this._listExec(function (name) { return _this.upgrade(name, options); });
+    };
+    DockerMachine.prototype.url = function (names, options) {
+        return this._namesStringResult(names, 'url', options);
+    };
+    DockerMachine.prototype.urlAll = function (options) {
+        var _this = this;
+        return this._listExec(function (name) { return _this.url(name, options); });
+    };
+    DockerMachine.prototype.exec = function (command, options) {
+        return this._exec(this._createCmdWithOptions(command.split(' '), options));
+    };
+    DockerMachine.prototype._namesBooleanResult = function (names, cmd, options) {
+        var _this = this;
+        var fn = function (name) { return _this._bexec(_this._createCmdWithOptions(cmd.split(' ').concat([name]), options)); };
         return this._namesExec(names, fn);
     };
-    DockerMachine.prototype.stopAll = function () {
-        return this._listExec(this.stop);
-    };
-    DockerMachine.prototype.upgrade = function (names) {
+    DockerMachine.prototype._namesStringResult = function (names, cmd, options) {
         var _this = this;
-        var fn = function (name) { return _this._bexec(['upgrade', name]); };
+        var fn = function (name) { return _this._exec(_this._createCmdWithOptions(cmd.split(' ').concat([name]), options)); };
         return this._namesExec(names, fn);
     };
-    DockerMachine.prototype.upgradeAll = function () {
-        return this._listExec(this.upgrade);
-    };
-    DockerMachine.prototype.url = function (names) {
-        var _this = this;
-        var fn = function (name) { return _this._exec(['url', name]); };
-        return this._namesExec(names, fn);
-    };
-    DockerMachine.prototype.urlAll = function () {
-        return this._listExec(this.url);
-    };
-    DockerMachine.prototype._driveOptions = function (driver) {
-        var optionValues;
-        if (!driver.name) {
-            throw new Error("Must provide driver name");
+    DockerMachine.prototype._createCmdWithOptions = function (cmd, options) {
+        var optionValues = [];
+        if (options) {
+            Object.keys(options).forEach(function (key) {
+                if (key.length === 1) {
+                    optionValues.push('-' + key);
+                }
+                else {
+                    optionValues.push('--' + key);
+                }
+                if (options[key]) {
+                    optionValues.push(options[key]);
+                }
+                else {
+                    optionValues.push('');
+                }
+            });
         }
-        optionValues = ['-d', driver.name];
-        Object.keys(driver.options).forEach(function (key) { return optionValues = optionValues.concat(['--' + key, driver.options[key]]); });
-        return optionValues;
-    };
-    DockerMachine.prototype._swarmOptions = function (swarm) {
-        var options = ['--swarm'];
-        if (swarm.master) {
-            options.push('--swarm-master');
-        }
-        this._pushSwarmOption(options, 'swarm-discovery', swarm.discovery);
-        this._pushSwarmOption(options, 'swarm-strategy', swarm.strategy);
-        this._pushSwarmOption(options, 'swarm-host', swarm.host);
-        this._pushSwarmOption(options, 'swarm-addr', swarm.addr);
-        this._pushSwarmOption(options, 'swarm-strategy', swarm.strategy);
-        if (swarm.opts) {
-            for (var _i = 0, _a = swarm.opts; _i < _a.length; _i++) {
-                var opt = _a[_i];
-                this._pushSwarmOption(options, 'swarm-opt', opt);
-            }
-        }
-        return options;
-    };
-    DockerMachine.prototype._pushSwarmOption = function (options, name, value) {
-        if (value) {
-            options.push('--' + name);
-            options.push(value);
-        }
+        return cmd.concat(optionValues);
     };
     DockerMachine.prototype._namesExec = function (names, fn) {
         return Array.isArray(names) ? this._batchExec(names, fn) : fn(names);
     };
     DockerMachine.prototype._listExec = function (fn) {
         var _this = this;
-        return this.ls(true).then(function (names) { return _this._batchExec(names, fn); });
+        return this.ls({ q: '' }).then(function (names) { return _this._batchExec(names, fn); });
     };
     DockerMachine.prototype._batchExec = function (names, fn) {
         var _this = this;

@@ -7,14 +7,12 @@ console.log("!!! Warning !!!");
 console.log("!!! This test will remove all existing docker machine and cannot be revert !!!");
 describe('DockerMachine', function () {
     describe('#create', function () {
-        var vboxDriver = {
-            name: 'virtualbox',
-            options: {
-                'virtualbox-memory': '512'
-            }
+        var options = {
+            'driver': 'virtualbox',
+            'virtualbox-memory': '512'
         };
         it('should create virtualbox VM and named vbox0, vbox1, vbox2, vbox3', function (done) {
-            return chai_1.expect(index_1.dm.create(['vbox0', 'vbox1', 'vbox2', 'vbox3'], vboxDriver)).to.eventually
+            return chai_1.expect(index_1.dm.create(['vbox0', 'vbox1', 'vbox2', 'vbox3'], options)).to.eventually
                 .deep.equal({
                 vbox0: true,
                 vbox1: true,
@@ -28,7 +26,7 @@ describe('DockerMachine', function () {
             .to.eventually.deep.property('[0].name', 'vbox0').notify(done); });
         it('should return list of machine', function (done) { return chai_1.expect(index_1.dm.ls())
             .to.eventually.deep.property('[0].driver', 'virtualbox').notify(done); });
-        it('should return list of machine name only', function (done) { return chai_1.expect(index_1.dm.ls(true))
+        it('should return list of machine name only', function (done) { return chai_1.expect(index_1.dm.ls({ q: '' }))
             .to.eventually.deep.equal(['vbox0', 'vbox1', 'vbox2', 'vbox3']).notify(done); });
     });
     describe('#inspect', function () {
@@ -119,23 +117,19 @@ describe('DockerMachine', function () {
         }).notify(done); });
     });
     describe('#create swarm', function () {
-        var vboxDriver = {
-            name: 'virtualbox',
-            options: {
-                'virtualbox-memory': '512'
-            }
-        };
-        var swarm = {
-            master: true,
-            discovery: 'token://1234'
+        var options = {
+            driver: 'virtualbox',
+            'virtualbox-memory': '512',
+            'swarm-master': '',
+            'swarm-discovery': 'token://1234'
         };
         it('should create swarm master and named vbox0', function (done) {
-            return chai_1.expect(index_1.dm.create('vbox0', vboxDriver, swarm)).to.eventually
+            return chai_1.expect(index_1.dm.create('vbox0', options)).to.eventually
                 .deep.equal(true).notify(done);
         });
         it('should create swarm slave and named vbox1, vobx2, vbox3', function (done) {
-            swarm.master = false;
-            chai_1.expect(index_1.dm.create(['vbox1', 'vbox2', 'vbox3'], vboxDriver, swarm)).to.eventually
+            delete options['swarm-master'];
+            chai_1.expect(index_1.dm.create(['vbox1', 'vbox2', 'vbox3'], options)).to.eventually
                 .deep.equal({
                 vbox1: true,
                 vbox2: true,

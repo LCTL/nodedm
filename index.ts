@@ -25,20 +25,6 @@ export interface Map<R> {
   [name: string]: R;
 }
 
-export interface Driver {
-  name: string;
-  options: Map<string>;
-}
-
-export interface Swarm {
-  master: boolean;
-  discovery?: string;
-  host?: string;
-  addr?: string;
-  strategy?: string;
-  opts?: string[];
-}
-
 export class MachineStatus {
 
   static STOPPED: string = 'Stopped';
@@ -67,82 +53,49 @@ export class MachineStatus {
 
 export class DockerMachine {
 
-  active(): Promise<string> {
-    return this._exec(['active']);
+  active(options?: any): Promise<string> {
+    return this._exec(this._createCmdWithOptions(['action'], options));
   }
 
-  config(names: string|string[]): Promise<string|Map<string>> {
-    var fn = (name: string) => this._exec(['config', name]);
+  config(names: string|string[], options?: any): Promise<string|Map<string>> {
+    return this._namesStringResult(names, 'config', options);
+  }
+
+  create(names: string|string[], options?: any): Promise<boolean|Map<boolean>> {
+    return this._namesBooleanResult(names, 'create', options);
+  }
+
+  env(names: string|string[], options?: any): Promise<string|Map<string>> {
+    return this._namesStringResult(names, 'env', options);
+  }
+
+  inspect(names: string|string[], options?: any): Promise<any|Map<any>> {
+    var fn = (name: string) => this._exec(this._createCmdWithOptions(['inspect', name], options)).then(out => JSON.parse(out));
     return this._namesExec(names, fn);
   }
 
-  create(names: string|string[], driver: Driver, swarm?: Swarm): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => {
-      var options: string[] = ['create', name].concat(this._driveOptions(driver));
-      if (swarm) {
-        options = options.concat(this._swarmOptions(swarm));
-      }
-      return this._bexec(options);
-    }
-    return this._namesExec(names, fn);
+  inspectAll(options?: any): Promise<Map<any>> {
+    return this._listExec(name => this.inspect(name, options));
   }
 
-  env(names: string|string[], config?: EnvConfig): Promise<string|Map<string>> {
-    var fn = (name: string) => {
-      var command = ['env', name]
-      var fn = null;
-
-      if (config.swarm === true) {
-        command.push('--swarm')
-      }
-
-      if (config.shell) {
-        command = command.concat(['--shell', config.shell])
-      }
-
-      if (config.unset === true) {
-        command = command.concat(['--unset'])
-      }
-
-      return this._exec(command);
-    }
-
-    return this._namesExec(names, fn);
+  ip(names: string|string[], options?: any): Promise<string|Map<string>> {
+    return this._namesStringResult(names, 'ip', options);
   }
 
-  inspect(names: string|string[]): Promise<any|Map<any>> {
-    var fn = (name: string) => this._exec(['inspect', name]).then((out: string) => JSON.parse(out));
-    return this._namesExec(names, fn);
+  ipAll(options?: any): Promise<Map<string>> {
+    return this._listExec(name => this.ip(name, options));
   }
 
-  inspectAll(): Promise<Map<any>> {
-    return this._listExec(this.inspect);
+  kill(names: string|string[], options?: any): Promise<boolean|Map<boolean>> {
+    return this._namesBooleanResult(names, 'kill', options);
   }
 
-  ip(names: string|string[]): Promise<string|Map<string>> {
-    var fn = (name: string) => this._exec(['ip', name]);
-    return this._namesExec(names, fn);
+  killAll(options?: any): Promise<Map<boolean>> {
+    return this._listExec(name => this.kill(name, options));
   }
 
-  ipAll(): Promise<Map<string>> {
-    return this._listExec(this.ip);
-  }
-
-  kill(names: string|string[]): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => this._bexec(['kill', name]);
-    return this._namesExec(names, fn);
-  }
-
-  killAll(): Promise<Map<boolean>> {
-    return this._listExec(this.kill);
-  }
-
-  ls(nameOnly?: boolean): Promise<Machine[]|string[]> {
-    var command = ['ls']
-    if (nameOnly) {
-      command.push('-q');
-    }
-    return this._exec(command).then(result => {
+  ls(options?: any): Promise<Machine[]|string[]> {
+    return this._exec(this._createCmdWithOptions(['ls'], options)).then(result => {
       var
         lines: string[] = result.trim().split('\n'),
         nameIndex: number = lines[0].indexOf('NAME'),
@@ -179,70 +132,56 @@ export class DockerMachine {
     });
   };
 
-  regenerateCert(names: string|string[]): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => this._bexec(['regenerate-certs', '-f', name]);
+  regenerateCert(names: string|string[], options?: any): Promise<boolean|Map<boolean>> {
+    return this._namesBooleanResult(names, 'regenerate-certs -f', options);
+  }
+
+  regenerateAllCert(options?: any): Promise<Map<boolean>> {
+    return this._listExec(name => this.regenerateCert(name, options));
+  }
+
+  restart(names: string|string[], options?: any): Promise<boolean|Map<boolean>> {
+    return this._namesBooleanResult(names, 'restart', options);
+  }
+
+  restartAll(options?: any): Promise<Map<boolean>> {
+    return this._listExec(name => this.restart(name, options));
+  }
+
+  rm(names: string|string[], options?: any): Promise<boolean|Map<boolean>> {
+    return this._namesBooleanResult(names, 'rm', options);
+  }
+
+  rmAll(options?: any): Promise<Map<boolean>> {
+    return this._listExec(name => this.rm(name, options));
+  }
+
+  ssh(names: string|string[], cmd: string, options?: any): Promise<string|Map<string>> {
+    var fn = (name: string) => this._exec(this._createCmdWithOptions(['ssh', name, '"' + cmd + '"'], options));
     return this._namesExec(names, fn);
   }
 
-  regenerateAllCert(): Promise<Map<boolean>> {
-    return this._listExec(this.regenerateCert);
+  sshAll(cmd: string, options?: any): Promise<Map<string>> {
+    return this._listExec(name => this.ssh(name, cmd, options));
   }
 
-  restart(names: string|string[]): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => this._bexec(['restart', name]);
-    return this._namesExec(names, fn);
-  }
-
-  restartAll(): Promise<Map<boolean>> {
-    return this._listExec(this.restart);
-  }
-
-  rm(names: string|string[], force?: boolean): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => {
-      var command = ['rm', name];
-      if (force) {
-        command.push('-f');
-      }
-      return this._bexec(command);
-    };
-    return this._namesExec(names, fn);
-  }
-
-  rmAll(force?: boolean): Promise<Map<boolean>> {
-    return this._listExec(name => this.rm(name, force));
-  }
-
-  ssh(names: string|string[], cmd: string): Promise<string|Map<string>> {
-    var fn = (name: string) => this._exec(['ssh', name, '"' + cmd + '"']);
-    return this._namesExec(names, fn);
-  }
-
-  sshAll(cmd: string): Promise<Map<string>> {
-    return this._listExec(name => this.ssh(name, cmd));
-  }
-
-  scp(from: string, to: string, recursive: boolean): Promise<string> {
-    var command = ['scp'];
-    if (recursive) {
-      command.push('-r');
-    }
-    command = command.concat([from, to]);
+  scp(from: string, to: string, options?: any): Promise<string> {
+    var command = this._createCmdWithOptions(['scp'], options);
     return this._exec(command);
   }
 
-  start(names: string|string[]): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => this._bexec(['start', name]);
-    return this._namesExec(names, fn);
+  start(names: string|string[], options?: any): Promise<boolean|Map<boolean>> {
+    return this._namesBooleanResult(names, 'start', options);
   }
 
-  startAll(): Promise<Map<boolean>> {
-    return this._listExec(this.start);
+  startAll(options?: any): Promise<Map<boolean>> {
+    return this._listExec(name => this.start(name, options));
   }
 
-  status(names: string|string[]): Promise<string|Map<string>> {
+  status(names: string|string[], options?: any): Promise<string|Map<string>> {
     var fn = (name: string) => {
       return new Promise<string>((resolve, reject) => {
-        this._exec(['status', name]).then((out: string) => {
+        this._exec(this._createCmdWithOptions(['status', name], options)).then((out: string) => {
           resolve(MachineStatus.valueOf(out))
         }).catch((out: string) => {
           if (/not exist/ig.test(out)) {
@@ -256,76 +195,66 @@ export class DockerMachine {
     return this._namesExec(names, fn);
   };
 
-  statusAll(): Promise<Map<string>> {
-    return this._listExec(this.status);
+  statusAll(options?: any): Promise<Map<string>> {
+    return this._listExec(name => this.status(name, options));
   }
 
-  stop(names: string|string[]): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => this._bexec(['stop', name]);
+  stop(names: string|string[], options?: any): Promise<boolean|Map<boolean>> {
+    return this._namesBooleanResult(names, 'stop', options);
+  }
+
+  stopAll(options?: any): Promise<Map<boolean>> {
+    return this._listExec(name => this.stop(name, options));
+  }
+
+  upgrade(names: string|string[], options?: any): Promise<boolean|Map<boolean>> {
+    return this._namesBooleanResult(names, 'upgrade', options);
+  }
+
+  upgradeAll(options?: any): Promise<Map<boolean>> {
+    return this._listExec(name => this.upgrade(name, options));
+  }
+
+  url(names: string|string[], options?: any): Promise<string|Map<string>> {
+    return this._namesStringResult(names, 'url', options);
+  }
+
+  urlAll(options?: any): Promise<Map<string>> {
+    return this._listExec(name => this.url(name, options));
+  }
+
+  exec(command: string, options?: any): Promise<string> {
+    return this._exec(this._createCmdWithOptions(command.split(' '), options));
+  }
+
+  protected _namesBooleanResult(names: string|string[], cmd: string, options?: any): Promise<boolean|Map<boolean>> {
+    var fn = (name: string) => this._bexec(this._createCmdWithOptions(cmd.split(' ').concat([name]), options));
     return this._namesExec(names, fn);
   }
 
-  stopAll(): Promise<Map<boolean>> {
-    return this._listExec(this.stop);
-  }
-
-  upgrade(names: string|string[]): Promise<boolean|Map<boolean>> {
-    var fn = (name: string) => this._bexec(['upgrade', name]);
+  protected _namesStringResult(names: string|string[], cmd: string, options?: any): Promise<string|Map<string>> {
+    var fn = (name: string) => this._exec(this._createCmdWithOptions(cmd.split(' ').concat([name]), options));
     return this._namesExec(names, fn);
   }
 
-  upgradeAll(): Promise<Map<boolean>> {
-    return this._listExec(this.upgrade);
-  }
+  protected _createCmdWithOptions(cmd: string[], options: Map<string>): string[] {
+    var optionValues: string[] = [];
+    if (options) {
+      Object.keys(options).forEach(key => {
+        if (key.length === 1) {
+          optionValues.push('-' + key);
+        } else {
+          optionValues.push('--' + key);
+        }
 
-  url(names: string|string[]): Promise<string|Map<string>> {
-    var fn = (name: string) => this._exec(['url', name]);
-    return this._namesExec(names, fn);
-  }
-
-  urlAll(): Promise<Map<string>> {
-    return this._listExec(this.url);
-  }
-
-  protected _driveOptions(driver: Driver): string[] {
-    var optionValues: string[];
-
-    if (!driver.name) {
-      throw new Error("Must provide driver name");
+        if (options[key]) {
+          optionValues.push(options[key]);
+        } else {
+          optionValues.push('');
+        }
+      })
     }
-
-    optionValues = ['-d', driver.name];
-    Object.keys(driver.options).forEach(key => optionValues = optionValues.concat(['--' + key, driver.options[key]]));
-    return optionValues;
-  }
-
-  protected _swarmOptions(swarm: Swarm): string[] {
-    var options: string[] = ['--swarm'];
-
-    if (swarm.master) {
-      options.push('--swarm-master');
-    }
-
-    this._pushSwarmOption(options, 'swarm-discovery', swarm.discovery);
-    this._pushSwarmOption(options, 'swarm-strategy', swarm.strategy);
-    this._pushSwarmOption(options, 'swarm-host', swarm.host);
-    this._pushSwarmOption(options, 'swarm-addr', swarm.addr);
-    this._pushSwarmOption(options, 'swarm-strategy', swarm.strategy);
-
-    if (swarm.opts) {
-      for (var opt of swarm.opts) {
-        this._pushSwarmOption(options, 'swarm-opt', opt);
-      }
-    }
-
-    return options;
-  }
-
-  protected _pushSwarmOption(options: string[], name: string, value: string) {
-    if (value) {
-      options.push('--' + name);
-      options.push(value);
-    }
+    return cmd.concat(optionValues);
   }
 
   protected _namesExec<R>(names: string|string[], fn: (name: string) => Promise<R>): Promise<R|Map<R>> {
@@ -333,7 +262,7 @@ export class DockerMachine {
   }
 
   protected _listExec<R>(fn: (name: string) => Promise<R>): Promise<Map<R>> {
-    return this.ls(true).then((names: string[]) => this._batchExec(names, fn));
+    return this.ls({q: ''}).then((names: string[]) => this._batchExec(names, fn));
   }
 
   protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<Map<R>> {

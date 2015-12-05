@@ -19,18 +19,6 @@ declare module 'nodedm' {
 	export interface Map<R> {
 	    [name: string]: R;
 	}
-	export interface Driver {
-	    name: string;
-	    options: Map<string>;
-	}
-	export interface Swarm {
-	    master: boolean;
-	    discovery?: string;
-	    host?: string;
-	    addr?: string;
-	    strategy?: string;
-	    opts?: string[];
-	}
 	export class MachineStatus {
 	    static STOPPED: string;
 	    static RUNNING: string;
@@ -41,39 +29,40 @@ declare module 'nodedm' {
 	    static valueOf(state: string): string;
 	}
 	export class DockerMachine {
-	    active(): Promise<string>;
-	    config(names: string | string[]): Promise<string | Map<string>>;
-	    create(names: string | string[], driver: Driver, swarm?: Swarm): Promise<boolean | Map<boolean>>;
-	    env(names: string | string[], config?: EnvConfig): Promise<string | Map<string>>;
-	    inspect(names: string | string[]): Promise<any | Map<any>>;
-	    inspectAll(): Promise<Map<any>>;
-	    ip(names: string | string[]): Promise<string | Map<string>>;
-	    ipAll(): Promise<Map<string>>;
-	    kill(names: string | string[]): Promise<boolean | Map<boolean>>;
-	    killAll(): Promise<Map<boolean>>;
-	    ls(nameOnly?: boolean): Promise<Machine[] | string[]>;
-	    regenerateCert(names: string | string[]): Promise<boolean | Map<boolean>>;
-	    regenerateAllCert(): Promise<Map<boolean>>;
-	    restart(names: string | string[]): Promise<boolean | Map<boolean>>;
-	    restartAll(): Promise<Map<boolean>>;
-	    rm(names: string | string[], force?: boolean): Promise<boolean | Map<boolean>>;
-	    rmAll(force?: boolean): Promise<Map<boolean>>;
-	    ssh(names: string | string[], cmd: string): Promise<string | Map<string>>;
-	    sshAll(cmd: string): Promise<Map<string>>;
-	    scp(from: string, to: string, recursive: boolean): Promise<string>;
-	    start(names: string | string[]): Promise<boolean | Map<boolean>>;
-	    startAll(): Promise<Map<boolean>>;
-	    status(names: string | string[]): Promise<string | Map<string>>;
-	    statusAll(): Promise<Map<string>>;
-	    stop(names: string | string[]): Promise<boolean | Map<boolean>>;
-	    stopAll(): Promise<Map<boolean>>;
-	    upgrade(names: string | string[]): Promise<boolean | Map<boolean>>;
-	    upgradeAll(): Promise<Map<boolean>>;
-	    url(names: string | string[]): Promise<string | Map<string>>;
-	    urlAll(): Promise<Map<string>>;
-	    protected _driveOptions(driver: Driver): string[];
-	    protected _swarmOptions(swarm: Swarm): string[];
-	    protected _pushSwarmOption(options: string[], name: string, value: string): void;
+	    active(options?: any): Promise<string>;
+	    config(names: string | string[], options?: any): Promise<string | Map<string>>;
+	    create(names: string | string[], options?: any): Promise<boolean | Map<boolean>>;
+	    env(names: string | string[], options?: any): Promise<string | Map<string>>;
+	    inspect(names: string | string[], options?: any): Promise<any | Map<any>>;
+	    inspectAll(options?: any): Promise<Map<any>>;
+	    ip(names: string | string[], options?: any): Promise<string | Map<string>>;
+	    ipAll(options?: any): Promise<Map<string>>;
+	    kill(names: string | string[], options?: any): Promise<boolean | Map<boolean>>;
+	    killAll(options?: any): Promise<Map<boolean>>;
+	    ls(options?: any): Promise<Machine[] | string[]>;
+	    regenerateCert(names: string | string[], options?: any): Promise<boolean | Map<boolean>>;
+	    regenerateAllCert(options?: any): Promise<Map<boolean>>;
+	    restart(names: string | string[], options?: any): Promise<boolean | Map<boolean>>;
+	    restartAll(options?: any): Promise<Map<boolean>>;
+	    rm(names: string | string[], options?: any): Promise<boolean | Map<boolean>>;
+	    rmAll(options?: any): Promise<Map<boolean>>;
+	    ssh(names: string | string[], cmd: string, options?: any): Promise<string | Map<string>>;
+	    sshAll(cmd: string, options?: any): Promise<Map<string>>;
+	    scp(from: string, to: string, options?: any): Promise<string>;
+	    start(names: string | string[], options?: any): Promise<boolean | Map<boolean>>;
+	    startAll(options?: any): Promise<Map<boolean>>;
+	    status(names: string | string[], options?: any): Promise<string | Map<string>>;
+	    statusAll(options?: any): Promise<Map<string>>;
+	    stop(names: string | string[], options?: any): Promise<boolean | Map<boolean>>;
+	    stopAll(options?: any): Promise<Map<boolean>>;
+	    upgrade(names: string | string[], options?: any): Promise<boolean | Map<boolean>>;
+	    upgradeAll(options?: any): Promise<Map<boolean>>;
+	    url(names: string | string[], options?: any): Promise<string | Map<string>>;
+	    urlAll(options?: any): Promise<Map<string>>;
+	    exec(command: string, options?: any): Promise<string>;
+	    protected _namesBooleanResult(names: string | string[], cmd: string, options?: any): Promise<boolean | Map<boolean>>;
+	    protected _namesStringResult(names: string | string[], cmd: string, options?: any): Promise<string | Map<string>>;
+	    protected _createCmdWithOptions(cmd: string[], options: Map<string>): string[];
 	    protected _namesExec<R>(names: string | string[], fn: (name: string) => Promise<R>): Promise<R | Map<R>>;
 	    protected _listExec<R>(fn: (name: string) => Promise<R>): Promise<Map<R>>;
 	    protected _batchExec<R>(names: string[], fn: (name: string) => Promise<R>): Promise<Map<R>>;
