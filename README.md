@@ -90,6 +90,15 @@ var dm = nodedm.dm
 
 #### Example:
 
+##### Change Path
+```
+// Windows
+dm.path = '"C:\\Program Files\\Docker Toolbox\\docker-machine"';
+
+// Linux
+dm.path = '/home/lawrence/docker-machine';
+```
+
 ##### Create and ls
 ```
 var options = {
