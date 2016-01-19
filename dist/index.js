@@ -27,7 +27,8 @@ var MachineStatus = (function () {
 })();
 exports.MachineStatus = MachineStatus;
 var DockerMachine = (function () {
-    function DockerMachine() {
+    function DockerMachine(path) {
+        this.path = path;
     }
     DockerMachine.prototype.active = function (options) {
         return this._exec(this._createCmdWithOptions(['action'], options));
@@ -242,10 +243,10 @@ var DockerMachine = (function () {
         return this._exec(command).then(function (out) { return true; });
     };
     DockerMachine.prototype._exec = function (command) {
+        var _this = this;
         var fullCommand = command.slice();
-        fullCommand.unshift('docker-machine');
         return new es6_promise_1.Promise(function (resolve, reject) {
-            child_process.exec(fullCommand.join(' '), function (error, stdout, stderr) {
+            child_process.exec((_this.path + " ") + fullCommand.join(' '), function (error, stdout, stderr) {
                 if (error) {
                     reject(new Error(stderr.toString().trim()));
                 }
@@ -260,4 +261,4 @@ var DockerMachine = (function () {
 })();
 exports.DockerMachine = DockerMachine;
 ;
-exports.dm = new DockerMachine();
+exports.dm = new DockerMachine('docker-machine');

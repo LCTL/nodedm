@@ -29,6 +29,8 @@ declare module 'nodedm' {
 	    static valueOf(state: string): string;
 	}
 	export class DockerMachine {
+	    path: string;
+	    constructor(path: string);
 	    active(options?: any): Promise<string>;
 	    config(names: string | string[], options?: any): Promise<string | Map<string>>;
 	    create(names: string | string[], options?: any): Promise<boolean | Map<boolean>>;

@@ -53,6 +53,8 @@ export class MachineStatus {
 
 export class DockerMachine {
 
+  constructor(public path: string) {}
+
   active(options?: any): Promise<string> {
     return this._exec(this._createCmdWithOptions(['action'], options));
   }
@@ -289,9 +291,8 @@ export class DockerMachine {
 
   protected _exec(command: string[]): Promise<string> {
     var fullCommand: string[] = command.slice();
-    fullCommand.unshift('docker-machine');
     return new Promise<String>((resolve, reject) => {
-      child_process.exec(fullCommand.join(' '), function(error, stdout, stderr) {
+      child_process.exec(`${this.path} ` + fullCommand.join(' '), function(error, stdout, stderr) {
         if (error) {
           reject(new Error(stderr.toString().trim()));
         } else {
@@ -303,4 +304,4 @@ export class DockerMachine {
 
 };
 
-export var dm = new DockerMachine();
+export var dm = new DockerMachine('docker-machine');
