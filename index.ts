@@ -53,7 +53,7 @@ export class MachineStatus {
 
 export class DockerMachine {
 
-  constructor(public path: string) {}
+  constructor(public path: string, public options?: any) {}
 
   active(options?: any): Promise<string> {
     return this._exec(this._createCmdWithOptions(['action'], options));
@@ -292,7 +292,8 @@ export class DockerMachine {
   protected _exec(command: string[]): Promise<string> {
     var fullCommand: string[] = command.slice();
     return new Promise<String>((resolve, reject) => {
-      child_process.exec(`${this.path} ` + fullCommand.join(' '), function(error, stdout, stderr) {
+      const execOptions = this.options && this.options.execOptions ? this.options.execOptions : {};
+      child_process.exec(`${this.path} ` + fullCommand.join(' '), execOptions, function(error, stdout, stderr) {
         if (error) {
           reject(new Error(stderr.toString().trim()));
         } else {

@@ -27,8 +27,9 @@ var MachineStatus = (function () {
 })();
 exports.MachineStatus = MachineStatus;
 var DockerMachine = (function () {
-    function DockerMachine(path) {
+    function DockerMachine(path, options) {
         this.path = path;
+        this.options = options;
     }
     DockerMachine.prototype.active = function (options) {
         return this._exec(this._createCmdWithOptions(['action'], options));
@@ -246,7 +247,8 @@ var DockerMachine = (function () {
         var _this = this;
         var fullCommand = command.slice();
         return new es6_promise_1.Promise(function (resolve, reject) {
-            child_process.exec((_this.path + " ") + fullCommand.join(' '), function (error, stdout, stderr) {
+            var execOptions = _this.options && _this.options.execOptions ? _this.options.execOptions : {};
+            child_process.exec((_this.path + " ") + fullCommand.join(' '), execOptions, function (error, stdout, stderr) {
                 if (error) {
                     reject(new Error(stderr.toString().trim()));
                 }

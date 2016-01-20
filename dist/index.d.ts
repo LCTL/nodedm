@@ -30,7 +30,8 @@ declare module 'nodedm' {
 	}
 	export class DockerMachine {
 	    path: string;
-	    constructor(path: string);
+	    options: any;
+	    constructor(path: string, options?: any);
 	    active(options?: any): Promise<string>;
 	    config(names: string | string[], options?: any): Promise<string | Map<string>>;
 	    create(names: string | string[], options?: any): Promise<boolean | Map<boolean>>;
