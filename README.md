@@ -99,6 +99,17 @@ dm.path = '"C:\\Program Files\\Docker Toolbox\\docker-machine"';
 dm.path = '/home/lawrence/docker-machine';
 ```
 
+##### Exec options
+```
+dm.options = {
+  execOptions: {
+    env: {
+      PATH: '/home/lawrence/'
+    }
+  }
+}
+```
+
 ##### Create and ls
 ```
 var options = {
